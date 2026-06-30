@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plastimi – Costos Fijos por Centro</title>
+<style>
+:root {
+  --bg:#0f1117; --surface:#1a1d27; --surface2:#222536; --surface3:#2a2e44;
+  --border:#2e3149; --border2:#3a3f5c;
+  --accent:#4f7ef7; --accent2:#34c97e; --accent3:#f7964f; --accent4:#e05c5c;
+  --text:#e8eaf6; --text2:#8b8fa8; --text3:#5a5e78;
+  --ext:#4f7ef7; --lam:#34c97e; --imp:#f7964f; --conf:#a78bfa; --est:#38bdf8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.header h1{font-size:17px;font-weight:600;}
+.header p{color:var(--text2);font-size:12px;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.period-sel{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;}
+.period-sel label{font-size:11px;color:var(--text2);white-space:nowrap;}
+.period-sel select,.period-sel input{background:transparent;border:none;color:var(--text);font-size:13px;outline:none;cursor:pointer;}
+.period-sel input{width:52px;}
+
+/* MAIN */
+.main{padding:24px 28px;max-width:1400px;margin:0 auto;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.toolbar-left{display:flex;align-items:center;gap:10px;}
+.sec{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);}
+.toolbar-right{display:flex;gap:8px;}
+.btn{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text2);transition:all .15s;display:flex;align-items:center;gap:6px;}
+.btn:hover{border-color:var(--accent);color:var(--text);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn-primary:hover{background:#6b92f8;border-color:#6b92f8;color:#fff;}
+.btn-success{background:var(--accent2);border-color:var(--accent2);color:#0f1117;}
+.btn-success:hover{background:#46d98b;border-color:#46d98b;}
+
+/* SUMMARY BAR */
+.summary-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:14px 16px;border-left:3px solid var(--accent);}
+.sum-card.ext{border-left-color:var(--ext);}
+.sum-card.lam{border-left-color:var(--lam);}
+.sum-card.imp{border-left-color:var(--imp);}
+.sum-card.conf{border-left-color:var(--conf);}
+.sum-card.est{border-left-color:var(--est);}
+.sum-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+.sum-total{font-size:18px;font-weight:700;line-height:1;}
+.sum-rate{font-size:11px;color:var(--text2);margin-top:4px;}
+.sum-rate span{color:var(--accent3);font-weight:600;}
+
+/* CENTROS GRID */
+.centros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px;}
+
+/* CENTRO CARD */
+.centro{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.centro-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.centro-title{display:flex;align-items:center;gap:10px;}
+.centro-dot{width:10px;height:10px;border-radius:50%;}
+.centro-name{font-size:14px;font-weight:600;}
+.centro-body{padding:16px 18px;}
+
+/* KG BASE */
+.kg-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 12px;background:var(--surface2);border-radius:7px;border:1px solid var(--border);}
+.kg-row label{font-size:11px;color:var(--text2);white-space:nowrap;}
+.kg-input{flex:1;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:600;outline:none;text-align:right;font-variant-numeric:tabular-nums;}
+.kg-row .unit{font-size:11px;color:var(--text3);}
+.kg-locked{font-size:14px;font-weight:700;color:var(--accent2);}
+
+/* RUBROS TABLE */
+.rubros-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;}
+.rubro-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:7px;}
+.rubro-name{font-size:12px;color:var(--text2);padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;}
+.rubro-name.editable{color:var(--text);}
+.rubro-name input{background:transparent;border:none;color:var(--text);font-size:12px;outline:none;width:100%;}
+.rubro-monto{display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;}
+.rubro-monto .prefix{font-size:11px;color:var(--text3);white-space:nowrap;}
+.monto-input{background:transparent;border:none;color:var(--text);font-size:12px;font-weight:500;width:100px;text-align:right;outline:none;font-variant-numeric:tabular-nums;}
+.monto-input:focus{color:var(--accent);}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px 6px;border-radius:4px;font-size:14px;line-height:1;}
+.del-btn:hover{color:var(--accent4);background:var(--surface3);}
+
+.add-rubro-btn{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);background:none;border:1px dashed var(--border2);border-radius:6px;padding:6px 12px;cursor:pointer;width:100%;margin-top:6px;transition:all .15s;}
+.add-rubro-btn:hover{color:var(--accent);border-color:var(--accent);}
+
+/* SUBTOTAL */
+.subtotal-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.subtotal-label{font-size:11px;color:var(--text2);}
+.subtotal-val{font-size:16px;font-weight:700;color:var(--accent2);}
+.rate-badge{font-size:11px;color:var(--accent3);background:rgba(247,150,79,.12);border:1px solid rgba(247,150,79,.25);padding:3px 9px;border-radius:20px;}
+
+/* FULL WIDTH CENTRO (Estructura) */
+.centro-full{grid-column:1/-1;}
+
+/* RESUMEN TABLE */
+.resumen-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;}
+.resumen-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.resumen-head h3{font-size:13px;font-weight:600;}
+table.resumen{width:100%;border-collapse:collapse;}
+table.resumen th{background:var(--surface2);padding:9px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);}
+table.resumen td{padding:10px 16px;font-size:12px;border-bottom:1px solid var(--border);}
+table.resumen tr:last-child td{border-bottom:none;}
+table.resumen td.num{text-align:right;font-variant-numeric:tabular-nums;}
+table.resumen tr.total-row td{background:var(--surface2);font-weight:600;font-size:13px;}
+.dot-cell{display:flex;align-items:center;gap:8px;}
+
+/* NOTIFICATION */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent2);color:var(--accent2);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Plastimi · Costos Fijos por Centro de Costos</h1>
+    <p>Carga mensual · Los datos se guardan automáticamente en el navegador</p>
+  </div>
+  <div class="header-right">
+    <div class="period-sel">
+      <label>Mes:</label>
+      <select id="selMes">
+        <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+        <option value="04">Abril</option><option value="05" selected>Mayo</option><option value="06">Junio</option>
+        <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+      </select>
+      <label>Año:</label>
+      <input type="number" id="selAnio" value="2026" min="2020" max="2035">
+    </div>
+    <a href="index.html" class="btn">← Volver al dashboard</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="sec">Centros de costos · <span id="periodoLabel">Mayo 2026</span></span>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn" onclick="limpiarTodo()">🗑 Limpiar</button>
+      <button class="btn" onclick="importarJSON()">📂 Importar JSON</button>
+      <button class="btn btn-success" onclick="exportarJSON()">⬇ Exportar JSON</button>
+      <button class="btn btn-primary" onclick="copiarParaDashboard()">📋 Copiar para dashboard</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY BAR -->
+  <div class="summary-bar">
+    <div class="sum-card ext"><div class="sum-label">Extrusión</div><div class="sum-total" id="s-ext">ARS 0</div><div class="sum-rate">Tasa: <span id="r-ext">—</span>/KG</div></div>
+    <div class="sum-card lam"><div class="sum-label">Laminación</div><div class="sum-total" id="s-lam">ARS 0</div><div class="sum-rate">Tasa: <span id="r-lam">—</span>/KG</div></div>
+    <div class="sum-card imp"><div class="sum-label">Impresión</div><div class="sum-total" id="s-imp">ARS 0</div><div class="sum-rate">Tasa: <span id="r-imp">—</span>/KG</div></div>
+    <div class="sum-card conf"><div class="sum-label">Confección</div><div class="sum-total" id="s-conf">ARS 0</div><div class="sum-rate">Tasa: <span id="r-conf">—</span>/KG</div></div>
+    <div class="sum-card est"><div class="sum-label">Estructura</div><div class="sum-total" id="s-est">ARS 0</div><div class="sum-rate">Tasa: <span id="r-est">—</span>/KG total</div></div>
+  </div>
+
+  <!-- CENTROS GRID -->
+  <div class="centros-grid" id="centrosGrid">
+    <!-- Generated by JS -->
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-card">
+    <div class="resumen-head">
+      <h3>Resumen de Costos Fijos</h3>
+      <span style="font-size:11px;color:var(--text3)">Tasa = Costo Total / KG Base del período</span>
+    </div>
+    <table class="resumen">
+      <thead>
+        <tr>
+          <th>Centro</th>
+          <th class="num">Mano de Obra</th>
+          <th class="num">Energía</th>
+          <th class="num">Mantenimiento</th>
+          <th class="num">Amortización</th>
+          <th class="num">Otros</th>
+          <th class="num">Total Costo Fijo</th>
+          <th class="num">KG Base</th>
+          <th class="num">Tasa (ARS/KG)</th>
+        </tr>
+      </thead>
+      <tbody id="resumenBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="onFileSelected(event)">
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────────────────────
+const CENTROS = [
+  { id:'ext',  label:'Extrusión',  color:'var(--ext)',  kgBase:427846, kgLocked:true,  col:'std' },
+  { id:'lam',  label:'Laminación', color:'var(--lam)',  kgBase:0,      kgLocked:false, col:'std' },
+  { id:'imp',  label:'Impresión',  color:'var(--imp)',  kgBase:0,      kgLocked:false, col:'std' },
+  { id:'conf', label:'Confección', color:'var(--conf)', kgBase:0,      kgLocked:false, col:'std' },
+  { id:'est',  label:'Estructura', color:'var(--est)',  kgBase:0,      kgLocked:false, col:'full',
+    nota:'La tasa se calcula sobre el total de KG procesados en todos los centros productivos' },
+];
+
+const RUBROS_DEFAULT = ['Mano de obra','Energía','Mantenimiento','Amortización'];
+
+// STATE: { centroId: { kgBase: number, rubros: [{nombre, monto}] } }
+let state = {};
+
+function initState() {
+  CENTROS.forEach(c => {
+    state[c.id] = {
+      kgBase: c.kgBase,
+      rubros: RUBROS_DEFAULT.map(r => ({ nombre: r, monto: 0 }))
+    };
+  });
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  const grid = document.getElementById('centrosGrid');
+  grid.innerHTML = '';
+  CENTROS.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'centro' + (c.col === 'full' ? ' centro-full' : '');
+    div.innerHTML = buildCentroHTML(c);
+    grid.appendChild(div);
+  });
+  updateSummary();
+  updateResumen();
+}
+
+function buildCentroHTML(c) {
+  const st = state[c.id];
+  const kgRow = c.kgLocked
+    ? `<div class="kg-row">
+        <label>Base KG (Mayo 2026):</label>
+        <span class="kg-locked">${fmt(st.kgBase)}</span>
+        <span class="unit">KG · dato del rpcp199</span>
+       </div>`
+    : `<div class="kg-row">
+        <label>Base KG del período:</label>
+        <input class="kg-input" type="text" inputmode="numeric"
+          value="${st.kgBase > 0 ? st.kgBase : ''}"
+          placeholder="0"
+          onchange="setKg('${c.id}', this.value)"
+          oninput="setKg('${c.id}', this.value)">
+        <span class="unit">KG</span>
+       </div>`;
+
+  const nota = c.nota
+    ? `<p style="font-size:11px;color:var(--text3);margin-bottom:12px">${c.nota}</p>`
+    : '';
+
+  const rubrosHTML = st.rubros.map((r, i) => buildRubroRow(c.id, r, i)).join('');
+
+  const total = st.rubros.reduce((s, r) => s + (parseFloat(r.monto) || 0), 0);
+  const rate = st.kgBase > 0 ? total / st.kgBase : null;
+
+  return `
+    <div class="centro-header">
+      <div class="centro-title">
+        <div class="centro-dot" style="background:${c.color}"></div>
+        <span class="centro-name">${c.label}</span>
+      </div>
+      ${rate != null ? `<span class="rate-badge">ARS ${fmtDec(rate)}/KG</span>` : ''}
+    </div>
+    <div class="centro-body">
+      ${kgRow}
+      ${nota}
+      <div class="rubros-label">Rubros de costos fijos</div>
+      <div id="rubros-${c.id}">${rubrosHTML}</div>
+      <button class="add-rubro-btn" onclick="addRubro('${c.id}')">+ Agregar rubro</button>
+      <div class="subtotal-row">
+        <span class="subtotal-label">Total costos fijos</span>
+        <span class="subtotal-val" id="subtotal-${c.id}">ARS ${fmtM(total)}</span>
+      </div>
+    </div>`;
+}
+
+function buildRubroRow(centroId, rubro, idx) {
+  const isDefault = idx < RUBROS_DEFAULT.length;
+  const nameCell = isDefault
+    ? `<div class="rubro-name">${rubro.nombre}</div>`
+    : `<div class="rubro-name editable"><input type="text" value="${rubro.nombre}"
+        placeholder="Nombre del rubro"
+        onchange="setNombre('${centroId}', ${idx}, this.value)"
+        oninput="setNombre('${centroId}', ${idx}, this.value)"></div>`;
+  return `
+    <div class="rubro-row" id="rubro-${centroId}-${idx}">
+      ${nameCell}
+      <div class="rubro-monto">
+        <span class="prefix">ARS</span>
+        <input class="monto-input" type="text" inputmode="numeric"
+          value="${rubro.monto > 0 ? fmtInput(rubro.monto) : ''}"
+          placeholder="0"
+          data-centro="${centroId}" data-idx="${idx}"
+          onchange="setMonto('${centroId}', ${idx}, this.value)"
+          oninput="onMontoInput(this)">
+      </div>
+      ${!isDefault ? `<button class="del-btn" onclick="delRubro('${centroId}', ${idx})" title="Eliminar">×</button>` : '<div style="width:26px"></div>'}
+    </div>`;
+}
+
+// ── STATE MUTATIONS ───────────────────────────────────────────────────────────
+function setKg(centroId, val) {
+  const n = parseNum(val);
+  state[centroId].kgBase = n;
+  refreshCentro(centroId);
+  autoSave();
+}
+
+function setMonto(centroId, idx, val) {
+  const n = parseNum(val);
+  state[centroId].rubros[idx].monto = n;
+  refreshCentro(centroId);
+  autoSave();
+}
+
+function onMontoInput(el) {
+  // format as user types but don't lose cursor
+  const raw = el.value.replace(/\./g,'').replace(/,/g,'.');
+  const n = parseFloat(raw);
+  // update state silently
+  const centroId = el.dataset.centro;
+  const idx = parseInt(el.dataset.idx);
+  if (!isNaN(n)) state[centroId].rubros[idx].monto = n;
+  refreshCentroSummary(centroId);
+  autoSave();
+}
+
+function setNombre(centroId, idx, val) {
+  state[centroId].rubros[idx].nombre = val;
+  autoSave();
+}
+
+function addRubro(centroId) {
+  state[centroId].rubros.push({ nombre: '', monto: 0 });
+  refreshCentro(centroId);
+  // Focus new input
+  setTimeout(() => {
+    const container = document.getElementById(`rubros-${centroId}`);
+    const inputs = container.querySelectorAll('.rubro-name.editable input');
+    if (inputs.length) inputs[inputs.length-1].focus();
+  }, 50);
+}
+
+function delRubro(centroId, idx) {
+  state[centroId].rubros.splice(idx, 1);
+  refreshCentro(centroId);
+  autoSave();
+}
+
+// ── PARTIAL REFRESH (avoid full re-render to preserve focus) ─────────────────
+function refreshCentro(centroId) {
+  const c = CENTROS.find(x => x.id === centroId);
+  const st = state[centroId];
+  const container = document.getElementById(`rubros-${centroId}`);
+  if (!container) { renderAll(); return; }
+  container.innerHTML = st.rubros.map((r, i) => buildRubroRow(centroId, r, i)).join('');
+  refreshCentroSummary(centroId);
+}
+
+function refreshCentroSummary(centroId) {
+  const st = state[centroId];
+  const total = st.rubros.reduce((s, r) => s + (parseFloat(r.monto) || 0), 0);
+  const el = document.getElementById(`subtotal-${centroId}`);
+  if (el) el.textContent = 'ARS ' + fmtM(total);
+
+  // update rate badge in header
+  const c = CENTROS.find(x => x.id === centroId);
+  const centroEl = el?.closest('.centro');
+  if (centroEl) {
+    const badge = centroEl.querySelector('.rate-badge');
+    const rate = st.kgBase > 0 ? total / st.kgBase : null;
+    if (rate != null) {
+      if (badge) badge.textContent = `ARS ${fmtDec(rate)}/KG`;
+      else {
+        const hdr = centroEl.querySelector('.centro-header');
+        const b = document.createElement('span');
+        b.className = 'rate-badge';
+        b.textContent = `ARS ${fmtDec(rate)}/KG`;
+        hdr.appendChild(b);
+      }
+    } else if (badge) badge.remove();
+  }
+
+  updateSummary();
+  updateResumen();
+}
+
+// ── SUMMARY BAR ──────────────────────────────────────────────────────────────
+function updateSummary() {
+  let totalKgProductivo = 0;
+  CENTROS.filter(c => c.id !== 'est').forEach(c => {
+    totalKgProductivo += state[c.id].kgBase || 0;
+  });
+
+  CENTROS.forEach(c => {
+    const st = state[c.id];
+    const total = st.rubros.reduce((s, r) => s + (parseFloat(r.monto) || 0), 0);
+    const kgBase = c.id === 'est' ? totalKgProductivo : (st.kgBase || 0);
+    const rate = kgBase > 0 ? total / kgBase : null;
+    document.getElementById(`s-${c.id}`).textContent = 'ARS ' + fmtM(total);
+    document.getElementById(`r-${c.id}`).textContent = rate != null ? fmtDec(rate) : '—';
+  });
+}
+
+// ── RESUMEN TABLE ─────────────────────────────────────────────────────────────
+function updateResumen() {
+  let totalKgProd = 0;
+  CENTROS.filter(c => c.id !== 'est').forEach(c => { totalKgProd += state[c.id].kgBase || 0; });
+
+  const colores = { ext:'var(--ext)', lam:'var(--lam)', imp:'var(--imp)', conf:'var(--conf)', est:'var(--est)' };
+  let totals = { mo:0, en:0, mt:0, am:0, ot:0, total:0, kg:0 };
+  let rows = '';
+
+  CENTROS.forEach(c => {
+    const st = state[c.id];
+    const byName = {};
+    st.rubros.forEach(r => { byName[r.nombre] = (byName[r.nombre] || 0) + (parseFloat(r.monto) || 0); });
+    const mo = byName['Mano de obra'] || 0;
+    const en = byName['Energía'] || 0;
+    const mt = byName['Mantenimiento'] || 0;
+    const am = byName['Amortización'] || 0;
+    const ot = st.rubros.filter(r => !['Mano de obra','Energía','Mantenimiento','Amortización'].includes(r.nombre))
+                        .reduce((s,r) => s + (parseFloat(r.monto)||0), 0);
+    const tot = mo + en + mt + am + ot;
+    const kgBase = c.id === 'est' ? totalKgProd : (st.kgBase || 0);
+    const rate = kgBase > 0 ? tot / kgBase : null;
+
+    totals.mo += mo; totals.en += en; totals.mt += mt; totals.am += am; totals.ot += ot; totals.total += tot;
+
+    const rateLabel = c.id === 'est'
+      ? (rate != null ? `ARS ${fmtDec(rate)}/KG total` : '—')
+      : (rate != null ? `ARS ${fmtDec(rate)}/KG` : '—');
+
+    rows += `<tr>
+      <td><div class="dot-cell"><div style="width:9px;height:9px;border-radius:50%;background:${colores[c.id]};flex-shrink:0"></div>${c.label}</div></td>
+      <td class="num">${mo > 0 ? 'ARS ' + fmtM(mo) : '—'}</td>
+      <td class="num">${en > 0 ? 'ARS ' + fmtM(en) : '—'}</td>
+      <td class="num">${mt > 0 ? 'ARS ' + fmtM(mt) : '—'}</td>
+      <td class="num">${am > 0 ? 'ARS ' + fmtM(am) : '—'}</td>
+      <td class="num">${ot > 0 ? 'ARS ' + fmtM(ot) : '—'}</td>
+      <td class="num" style="color:var(--accent2);font-weight:600">ARS ${fmtM(tot)}</td>
+      <td class="num" style="color:var(--text2)">${kgBase > 0 ? fmtM(kgBase) + ' KG' : '—'}</td>
+      <td class="num" style="color:var(--accent3);font-weight:600">${rateLabel}</td>
+    </tr>`;
+  });
+
+  // Total row
+  const totalKgRow = CENTROS.filter(c => c.id !== 'est').reduce((s,c) => s + (state[c.id].kgBase||0), 0);
+  rows += `<tr class="total-row">
+    <td>TOTAL</td>
+    <td class="num">ARS ${fmtM(totals.mo)}</td>
+    <td class="num">ARS ${fmtM(totals.en)}</td>
+    <td class="num">ARS ${fmtM(totals.mt)}</td>
+    <td class="num">ARS ${fmtM(totals.am)}</td>
+    <td class="num">ARS ${fmtM(totals.ot)}</td>
+    <td class="num" style="color:var(--accent2)">ARS ${fmtM(totals.total)}</td>
+    <td class="num" style="color:var(--text2)">${fmtM(totalKgRow)} KG</td>
+    <td class="num">—</td>
+  </tr>`;
+
+  document.getElementById('resumenBody').innerHTML = rows;
+}
+
+// ── PERIOD ────────────────────────────────────────────────────────────────────
+function getPeriodo() {
+  const meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const m = document.getElementById('selMes').value;
+  const a = document.getElementById('selAnio').value;
+  return { mes: m, anio: a, label: `${meses[parseInt(m)]} ${a}`, key: `${a}-${m}` };
+}
+document.getElementById('selMes').addEventListener('change', () => {
+  document.getElementById('periodoLabel').textContent = getPeriodo().label;
+  loadFromStorage();
+});
+document.getElementById('selAnio').addEventListener('input', () => {
+  document.getElementById('periodoLabel').textContent = getPeriodo().label;
+});
+
+// ── PERSISTENCE ───────────────────────────────────────────────────────────────
+function storageKey() { return `plastimi_cf_${getPeriodo().key}`; }
+
+function autoSave() {
+  try { localStorage.setItem(storageKey(), JSON.stringify(state)); } catch(e){}
+}
+
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem(storageKey());
+    if (saved) {
+      const loaded = JSON.parse(saved);
+      // Merge: keep default rubros structure, overlay saved values
+      CENTROS.forEach(c => {
+        if (loaded[c.id]) {
+          state[c.id].kgBase = loaded[c.id].kgBase ?? state[c.id].kgBase;
+          state[c.id].rubros = loaded[c.id].rubros ?? state[c.id].rubros;
+        }
+      });
+      showToast('Datos del período cargados');
+    }
+  } catch(e) {}
+  renderAll();
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────────────────
+function exportarJSON() {
+  const p = getPeriodo();
+  let totalKgProd = 0;
+  CENTROS.filter(c => c.id !== 'est').forEach(c => { totalKgProd += state[c.id].kgBase || 0; });
+
+  const tasas = {};
+  CENTROS.forEach(c => {
+    const st = state[c.id];
+    const total = st.rubros.reduce((s,r) => s+(parseFloat(r.monto)||0), 0);
+    const kgBase = c.id === 'est' ? totalKgProd : (st.kgBase||0);
+    tasas[c.id] = { label: c.label, total_costo_fijo: total, kg_base: kgBase, tasa_kg: kgBase>0 ? total/kgBase : 0 };
+  });
+
+  const payload = {
+    periodo: p.key, label: p.label,
+    centros: state,
+    tasas,
+    exportado: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `costos_fijos_${p.key}.json`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON exportado');
+}
+
+function importarJSON() { document.getElementById('fileInput').click(); }
+
+function onFileSelected(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.centros) {
+        CENTROS.forEach(c => { if (data.centros[c.id]) state[c.id] = data.centros[c.id]; });
+        autoSave(); renderAll();
+        showToast('JSON importado correctamente');
+      } else throw new Error('Formato inválido');
+    } catch(err) { showToast('Error al importar: ' + err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function copiarParaDashboard() {
+  const p = getPeriodo();
+  let totalKgProd = 0;
+  CENTROS.filter(c => c.id !== 'est').forEach(c => { totalKgProd += state[c.id].kgBase||0; });
+
+  const tasas = {};
+  CENTROS.forEach(c => {
+    const st = state[c.id];
+    const total = st.rubros.reduce((s,r) => s+(parseFloat(r.monto)||0), 0);
+    const kgBase = c.id === 'est' ? totalKgProd : (st.kgBase||0);
+    tasas[c.id] = { label:c.label, tasa_kg: kgBase>0 ? total/kgBase : 0, total_costo_fijo: total };
+  });
+
+  const json = JSON.stringify({ periodo: p.key, label: p.label, tasas });
+  navigator.clipboard.writeText(json).then(() => showToast('Copiado al portapapeles'));
+}
+
+function limpiarTodo() {
+  if (!confirm('¿Limpiar todos los costos cargados para este período?')) return;
+  initState(); autoSave(); renderAll();
+  showToast('Datos limpiados');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function parseNum(val) {
+  if (typeof val === 'number') return val;
+  const s = String(val).trim().replace(/\./g,'').replace(',','.');
+  return parseFloat(s) || 0;
+}
+function fmt(n) { return Math.round(n).toLocaleString('es-AR'); }
+function fmtM(n) {
+  if (!n) return '0';
+  if (n >= 1e9) return (n/1e9).toFixed(2)+' MM';
+  if (n >= 1e6) return (n/1e6).toFixed(2)+' M';
+  return Math.round(n).toLocaleString('es-AR');
+}
+function fmtDec(n) {
+  if (!n) return '0';
+  return n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtInput(n) {
+  return n > 0 ? Math.round(n).toLocaleString('es-AR') : '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+initState();
+document.getElementById('periodoLabel').textContent = getPeriodo().label;
+loadFromStorage();
+</script>
+</body>
+</html>
