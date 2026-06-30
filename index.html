@@ -14,9 +14,13 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,sans-serif;font-size:14px;}
-  .header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;}
-  .header h1{font-size:18px;font-weight:600;}
-  .header p{color:var(--text2);font-size:12px;margin-top:3px;}
+  .header{background:#fff;border-bottom:2px solid #e8eaf0;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .header-left{display:flex;align-items:center;gap:16px;}
+  .header-logo{height:52px;width:auto;}
+  .header-divider{width:1px;height:38px;background:#d0d3e0;flex-shrink:0;}
+  .header h1{font-size:17px;font-weight:700;line-height:1.2;color:#1a1d3a;}
+  .header p{color:#6b7080;font-size:11px;margin-top:3px;}
+  .header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
   .badge{background:var(--accent);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;}
   .main{padding:24px 28px;max-width:1500px;margin:0 auto;}
   .sec{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:14px;}
@@ -117,11 +121,18 @@
 </head>
 <body>
 <div class="header">
-  <div>
-    <h1>Plastimi · Dashboard de Costos de Producción</h1>
-    <p>Extrusión Parque · Productos Sin Impresión (Tipo 2 + Bobinas Extrusadas Tipo 3)</p>
+  <div class="header-left">
+    <img src="logo.png" alt="Smart Metrics" class="header-logo">
+    <div class="header-divider"></div>
+    <div>
+      <h1>Plastimi · Dashboard de Costos de Producción</h1>
+      <p>Extrusión Parque · Productos Sin Impresión (Tipo 2 + Bobinas Extrusadas Tipo 3)</p>
+    </div>
   </div>
-  <select id="periodoSel" onchange="changePeriodo(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;outline:none;margin-right:8px"></select><span class="badge" id="periodoBadge">Cargando...</span>
+  <div class="header-right">
+    <select id="periodoSel" onchange="changePeriodo(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;outline:none;"></select>
+    <span class="badge" id="periodoBadge">Cargando...</span>
+  </div>
 </div>
 <div class="main">
   <p class="sec">Resumen del período</p>
