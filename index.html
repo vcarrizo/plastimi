@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plastimi – Dashboard de Costos de Producción</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg:#0f1117;--surface:#1a1d27;--surface2:#222536;--border:#2e3149;
@@ -89,6 +90,29 @@
   .pb:disabled{opacity:.3;cursor:default;}
   .placeholder{text-align:center;padding:60px 0;color:var(--text3);font-size:13px;}
   .footer{text-align:center;padding:20px;color:var(--text3);font-size:11px;border-top:1px solid var(--border);margin-top:8px;}
+
+  /* DRAG-DROP UPLOAD */
+  .drop-zone{border:2px dashed var(--border);border-radius:12px;padding:36px 24px;text-align:center;cursor:pointer;transition:.2s;position:relative;}
+  .drop-zone.drag-over{border-color:var(--accent);background:rgba(79,126,247,.07);}
+  .drop-zone.has-files{border-color:var(--accent2);border-style:solid;}
+  .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .drop-icon{font-size:36px;margin-bottom:10px;line-height:1;}
+  .drop-label{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;}
+  .drop-sub{font-size:12px;color:var(--text3);}
+  .file-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center;}
+  .chip{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;}
+  .chip.ok{border-color:var(--accent2);color:var(--accent2);}
+  .chip.err{border-color:var(--accent4);color:var(--accent4);}
+  .chip.warn{border-color:var(--accent3);color:var(--accent3);}
+  .proc-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:13px;font-weight:600;cursor:pointer;margin-top:18px;transition:.15s;}
+  .proc-btn:hover{background:#3a6adf;}
+  .proc-btn:disabled{background:var(--surface2);color:var(--text3);cursor:not-allowed;}
+  .proc-log{margin-top:14px;font-size:12px;color:var(--text2);min-height:20px;text-align:center;}
+  .proc-ok{color:var(--accent2);}
+  .proc-err{color:var(--accent4);}
+  .periodo-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;outline:none;width:120px;}
+  .periodo-input:focus{border-color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -256,26 +280,40 @@
 </div>
   <!-- TAB DATOS -->
   <div id="tab-datos" class="tab-content">
+
+    <!-- Upload card -->
+    <div class="card mb">
+      <h3>Cargar nuevo período</h3>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;">
+        <div>
+          <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Período</label>
+          <input type="month" id="uploadPeriodo" class="periodo-input" value="2026-06">
+        </div>
+        <div style="flex:1;min-width:220px;font-size:12px;color:var(--text3);padding-top:18px">
+          Arrastrá los archivos <strong style="color:var(--text2)">rpcp199</strong> + <strong style="color:var(--text2)">ragr004</strong>.<br>
+          Opcionalmente el catálogo <strong style="color:var(--text2)">Productos Iniflex</strong> para filtrar por tipo.
+        </div>
+      </div>
+
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" multiple accept=".xlsx,.xls" onchange="onFileInput(this.files)">
+        <div class="drop-icon">📂</div>
+        <div class="drop-label">Arrastrá los archivos aquí</div>
+        <div class="drop-sub">o hacé clic para seleccionarlos · .xlsx · .xls</div>
+      </div>
+      <div class="file-chips" id="fileChips"></div>
+      <div style="text-align:center">
+        <button class="proc-btn" id="procBtn" disabled onclick="procesarArchivos()">Procesar →</button>
+      </div>
+      <div class="proc-log" id="procLog"></div>
+    </div>
+
+    <!-- Periods list -->
     <div class="card mb">
       <h3>Períodos disponibles</h3>
       <div id="datosManifest" style="margin-top:8px"></div>
     </div>
-    <div class="card mb">
-      <h3>Agregar un nuevo período</h3>
-      <div style="color:var(--text2);font-size:13px;line-height:1.7">
-        <p style="margin-bottom:10px">Ejecutá <code style="background:var(--surface2);padding:2px 7px;border-radius:4px;color:var(--accent)">procesar_mes.py</code> con los archivos XLS del mes:</p>
-        <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:12px;color:var(--accent2);overflow-x:auto">python procesar_mes.py \
-  --rpcp199 rpcp199_XXXXXX.xlsx \
-  --ragr004 ragr004_XXXXXX.xlsx \
-  --catalogo "Productos Iniflex.xlsx" \
-  --periodo 2026-06</pre>
-        <p style="margin-top:10px">Luego subí los datos al repo:</p>
-        <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:12px;color:var(--accent2);overflow-x:auto">git add datos/
-git commit -m "datos: agregar período 2026-06"
-git push</pre>
-        <p style="margin-top:10px;color:var(--text3);font-size:12px">Los datos estarán disponibles en pocos minutos cuando GitHub Pages actualice el sitio.</p>
-      </div>
-    </div>
+
   </div>
 
 <div class="footer" id="footerTxt">Plastimi · Extrusión Parque · Sin Impresión + Bobinas Extrusadas</div>
@@ -311,9 +349,15 @@ async function changePeriodo(periodo) {
   if(periodo === currentPeriodo) return;
   document.getElementById('periodoBadge').textContent = 'Cargando...';
   try {
-    const resp = await fetch('datos/' + periodo + '.json');
-    if(!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
+    let data;
+    const local = localStorage.getItem(LS_DATA_PFX + periodo);
+    if(local) {
+      data = JSON.parse(local);
+    } else {
+      const resp = await fetch('datos/' + periodo + '.json');
+      if(!resp.ok) throw new Error('HTTP ' + resp.status);
+      data = await resp.json();
+    }
     currentPeriodo = periodo;
     document.getElementById('periodoSel').value = periodo;
     initDashboard(data);
@@ -325,11 +369,14 @@ async function changePeriodo(periodo) {
   }
 }
 
-// Bootstrap: load manifest → populate selector → load default period
-fetch('datos/manifest.json')
-  .then(r => { if(!r.ok) throw new Error('manifest.json no encontrado'); return r.json(); })
-  .then(m => {
-    manifest = m;
+// Bootstrap: load manifest (remote + localStorage merge)
+Promise.all([
+  fetch('datos/manifest.json').then(r=>r.ok?r.json():{}).catch(()=>({})),
+  Promise.resolve((() => { try{ return JSON.parse(localStorage.getItem(LS_MANIFEST)||'{}'); }catch(e){return {};} })())
+]).then(([remote, local]) => {
+  manifest = {...remote, ...local};
+  {
+    const m = manifest;
     const sel = document.getElementById('periodoSel');
     sel.innerHTML = '';
     Object.values(m).sort((a,b)=>b.periodo.localeCompare(a.periodo)).forEach(entry => {
@@ -340,12 +387,12 @@ fetch('datos/manifest.json')
     });
     const first = sel.options[0]?.value;
     if(first) return changePeriodo(first);
-  })
-  .catch(err => {
-    document.getElementById('periodoBadge').textContent = 'Sin datos';
-    document.getElementById('datosManifest').innerHTML =
-      '<p style="color:var(--accent4)">No se encontró el archivo de períodos (datos/manifest.json).<br>Ejecutá procesar_mes.py para generar los datos del primer período.</p>';
-  });
+  }
+}).catch(err => {
+  document.getElementById('periodoBadge').textContent = 'Sin datos';
+  document.getElementById('datosManifest').innerHTML =
+    '<p style="color:var(--accent4)">No hay períodos cargados. Usá el área de carga en la pestaña Datos para procesar los archivos XLS.</p>';
+});
 
 // ── FUNCTION DEFINITIONS ─────────────────────────────────────────────────────
 
@@ -687,7 +734,7 @@ function renderDatos() {
       onmouseout="this.style.borderColor='${currentPeriodo===m.periodo?'var(--accent)':'var(--border)'}'">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <span style="font-size:14px;font-weight:600">${m.label}</span>
-        ${currentPeriodo===m.periodo?'<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px">Activo</span>':''}
+        ${(currentPeriodo===m.periodo?'<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px">Activo</span>':'')+(m.local?'<span style="background:rgba(52,201,126,.15);color:var(--accent2);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(52,201,126,.3);margin-left:4px">Local</span>':'');''}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2)">
         <div>KG: <span style="color:var(--text)">${fmtN(m.total_kg)}</span></div>
@@ -831,6 +878,370 @@ DATA.by_grupo.forEach(g=>{
   document.getElementById('periodoBadge').textContent = data.summary.label||data.summary.periodo;
   document.getElementById('footerTxt').textContent =
     'Plastimi · '+(data.summary.label||data.summary.periodo)+' · Extrusión Parque · Sin Impresión + Bobinas Extrusadas';
+}
+
+
+// ── XLSX BROWSER PROCESSING ───────────────────────────────────────────────────
+const TIPOS_INCLUIDOS = new Set(['2 - SIN IMPRESION', '3 - BOBINAS EXTRUSADAS']);
+const MESES_ES = {'01':'Enero','02':'Febrero','03':'Marzo','04':'Abril','05':'Mayo',
+  '06':'Junio','07':'Julio','08':'Agosto','09':'Septiembre','10':'Octubre','11':'Noviembre','12':'Diciembre'};
+const LS_DATA_PFX = 'plastimi_data_';
+const LS_MANIFEST = 'plastimi_manifest';
+const LS_CATALOG  = 'plastimi_catalog';
+
+let dropFiles = {};  // { rpcp199: File, ragr004: File, catalogo: File }
+let cachedCatalog = {};
+
+// Detect file role from filename
+function detectRole(name) {
+  const n = name.toLowerCase();
+  if(n.includes('rpcp199')) return 'rpcp199';
+  if(n.includes('ragr004')) return 'ragr004';
+  if(n.includes('iniflex') || n.includes('producto') || n.includes('catalogo') || n.includes('catálogo')) return 'catalogo';
+  return null;
+}
+
+// Update chip display
+function updateChips() {
+  const chips = document.getElementById('fileChips');
+  const roles = { rpcp199:'rpcp199 ✓', ragr004:'ragr004 ✓', catalogo:'Catálogo ✓' };
+  const needed = ['rpcp199','ragr004'];
+  const ready = needed.every(r => dropFiles[r]);
+  chips.innerHTML = Object.entries(dropFiles).map(([role, file]) =>
+    `<div class="chip ok">✓ ${file.name.substring(0,40)}<span style="color:var(--text3);margin-left:4px">(${roles[role]||role})</span></div>`
+  ).join('') +
+  needed.filter(r=>!dropFiles[r]).map(r=>`<div class="chip warn">Falta: ${r}</div>`).join('');
+  document.getElementById('procBtn').disabled = !ready;
+}
+
+function onFileDrop(files) {
+  let unknowns = [];
+  Array.from(files).forEach(f => {
+    const role = detectRole(f.name);
+    if(role) dropFiles[role] = f;
+    else unknowns.push(f.name);
+  });
+  if(unknowns.length) setLog('No se reconoció: ' + unknowns.join(', ') + ' (renombrá el archivo o incluí "rpcp199"/"ragr004" en el nombre)', 'warn');
+  else setLog('');
+  updateChips();
+}
+
+function onFileInput(files) { onFileDrop(files); }
+
+function setLog(msg, type='') {
+  const el = document.getElementById('procLog');
+  el.textContent = msg;
+  el.className = 'proc-log' + (type==='ok'?' proc-ok':type==='err'?' proc-err':'');
+}
+
+// Drop zone events
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('dropZone');
+  if(!dz) return;
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    dz.classList.add('has-files');
+    onFileDrop(e.dataTransfer.files);
+  });
+});
+
+// Read file as ArrayBuffer
+function readFile(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result);
+    reader.onerror = rej;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// Parse catalog XLSX
+function parseCatalog(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null});
+  const cat = {};
+  for(let i=1;i<rows.length;i++) {
+    const r=rows[i];
+    if(!r[0]) continue;
+    const code = typeof r[0]==='number' ? String(Math.round(r[0])) : String(r[0]);
+    cat[code] = { tipo:String(r[2]||''), grupo:String(r[3]||''), desc:String(r[1]||'') };
+  }
+  return cat;
+}
+
+// Parse ragr004
+function parseRagr004(wb) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null});
+  const unitCosts = {};
+  const SECS = ['02.01.01','02.01.02','02.01.03','02.03.03'];
+  let cur = null;
+  for(const row of rows) {
+    const b=row[1], c=row[2], cant=row[7], valor=row[13];
+    if(b && typeof b==='string') { for(const s of SECS){if(b.includes(s)){cur=s;break;}} }
+    if(cur && c && typeof c==='string') {
+      const cp=c.split(' - ')[0].trim();
+      const pfx=cur+'.';
+      if(cp.startsWith(pfx)) {
+        const code=cp.slice(pfx.length);
+        if(cant && cant!==0 && valor) unitCosts[code] = valor/cant;
+      }
+    }
+  }
+  return unitCosts;
+}
+
+// Parse rpcp199
+function parseRpcp199(wb, catalog, unitCosts) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  // cellDates:true converts date serials to JS Date objects during read
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:null});
+  const hasCat = Object.keys(catalog).length > 0;
+  const records = [];
+  let curOp=null, curArt=null;
+
+  for(const row of rows) {
+    const b = row[1];
+    if(b === 'OP:') {
+      curOp  = row[4]  ? Math.round(Number(row[4]))  : null;
+      curArt = row[19] ? String(row[19]) : null;
+      continue;
+    }
+    // Date detection: raw:false gives strings; dates come as "YYYY-MM-DD" formatted by SheetJS
+    // We also check numeric dates (serial)
+    const bRaw = row[1];
+    const isDate = bRaw && (
+      /^\d{4}-\d{2}-\d{2}/.test(String(bRaw)) ||
+      (typeof bRaw === 'number' && bRaw > 40000)
+    );
+    if(!isDate || !curArt) continue;
+
+    const comp=row[16], cant=parseFloat(row[23]);
+    if(!comp || !cant || isNaN(cant)) continue;
+
+    const artParts = curArt.split(' - ');
+    const artCV = artParts[0].trim();
+    const artCode = artCV.split('/')[0];
+    const artName = artParts.slice(1).join(' - ').trim();
+
+    const cat = catalog[artCode] || {};
+    if(hasCat && !TIPOS_INCLUIDOS.has(cat.tipo||'')) continue;
+
+    const compParts = String(comp).split(' - ');
+    const compCode = compParts[0].trim().replace('/', '.');
+    const compName = compParts.length>1 ? compParts.slice(1).join(' - ').split(' / ')[0].trim() : compParts[0].trim();
+
+    const cu = unitCosts[compCode];
+    const ct = cu ? cu * cant : 0;
+
+    const fecha = String(bRaw).slice(0,10);
+
+    records.push({
+      fecha, op:curOp,
+      art_code:artCV, art_name:artName.substring(0,55),
+      art_tipo:cat.tipo||'', art_grupo:cat.grupo||'',
+      comp_code:compCode, comp_name:compName.substring(0,40),
+      cantidad_kg: Math.round(cant*10000)/10000,
+      costo_unit: cu ? Math.round(cu*10000)/10000 : null,
+      costo_total: Math.round(ct*100)/100,
+      sin_costo: !cu
+    });
+  }
+  return records;
+}
+
+// Aggregate records → dashboard JSON (mirrors Python construir_dashboard_data)
+function buildDashboardData(records, periodo) {
+  const byArt={}, byComp={}, byGrupo={};
+
+  for(const r of records) {
+    const key=r.art_code;
+    if(!byArt[key]) byArt[key]={kg:0,costo:0,ops:new Set(),comps:{},name:r.art_name,tipo:r.art_tipo,grupo:r.art_grupo};
+    byArt[key].kg += r.cantidad_kg;
+    byArt[key].costo += r.costo_total;
+    byArt[key].ops.add(r.op);
+    if(!byArt[key].comps[r.comp_name]) byArt[key].comps[r.comp_name]={kg:0,costo:0};
+    byArt[key].comps[r.comp_name].kg += r.cantidad_kg;
+    byArt[key].comps[r.comp_name].costo += r.costo_total;
+
+    if(!byComp[r.comp_name]) byComp[r.comp_name]={kg:0,costo:0};
+    byComp[r.comp_name].kg += r.cantidad_kg;
+    byComp[r.comp_name].costo += r.costo_total;
+
+    const g = r.art_grupo.includes(' - ') ? r.art_grupo.split(' - ').slice(1).join(' - ') : r.art_grupo;
+    if(!byGrupo[g]) byGrupo[g]={kg:0,costo:0,arts:new Set()};
+    byGrupo[g].kg += r.cantidad_kg;
+    byGrupo[g].costo += r.costo_total;
+    byGrupo[g].arts.add(r.art_code);
+  }
+
+  const topArts  = Object.entries(byArt).sort((a,b)=>b[1].costo-a[1].costo).slice(0,15);
+  const topComps = Object.entries(byComp).sort((a,b)=>b[1].costo-a[1].costo).slice(0,15);
+  const gruposSrt= Object.entries(byGrupo).sort((a,b)=>b[1].costo-a[1].costo);
+
+  const totalKg    = records.reduce((s,r)=>s+r.cantidad_kg,0);
+  const totalCosto = records.reduce((s,r)=>s+r.costo_total,0);
+  const totalOps   = new Set(records.map(r=>r.op)).size;
+  const [anio,mes] = periodo.split('-');
+
+  const summary = {
+    periodo, label: `${MESES_ES[mes]||mes} ${anio}`,
+    etapa:'Extrusión Parque',
+    total_kg: Math.round(totalKg),
+    total_costo: Math.round(totalCosto),
+    total_ops: totalOps,
+    total_arts: Object.keys(byArt).length,
+    costo_por_kg: totalKg>0 ? Math.round(totalCosto/totalKg*100)/100 : 0
+  };
+
+  // Stacked bar
+  const top15codes = topArts.map(([k])=>k);
+  const allCompsInTop = new Set();
+  top15codes.forEach(c=>Object.keys(byArt[c].comps).forEach(n=>allCompsInTop.add(n)));
+  const compOrder = [...allCompsInTop].sort((a,b)=>byComp[b].costo-byComp[a].costo);
+
+  const stacked_bar = {
+    art_labels: top15codes.map(c=>`${c} · ${byArt[c].name.substring(0,35)}`),
+    art_codes: top15codes,
+    comp_labels: compOrder,
+    datasets: compOrder.map(comp=>({
+      comp, values: top15codes.map(c=>Math.round(byArt[c].comps[comp]?.costo||0))
+    }))
+  };
+
+  // Per-article component detail
+  const art_comp_detail = {};
+  for(const [k,v] of Object.entries(byArt)) {
+    const comps = Object.entries(v.comps).sort((a,b)=>b[1].costo-a[1].costo).filter(([,d])=>d.costo>0);
+    const g = v.grupo.includes(' - ') ? v.grupo.split(' - ').slice(1).join(' - ') : v.grupo;
+    art_comp_detail[k] = {
+      name:v.name, grupo:g,
+      kg:Math.round(v.kg), costo:Math.round(v.costo), ops:v.ops.size,
+      comps: comps.map(([n,d])=>({
+        name:n, kg:Math.round(d.kg*100)/100, costo:Math.round(d.costo),
+        pct: v.costo>0 ? Math.round(d.costo/v.costo*1000)/10 : 0
+      }))
+    };
+  }
+
+  return {
+    summary,
+    by_grupo: gruposSrt.map(([g,v])=>({grupo:g, kg:Math.round(v.kg), costo:Math.round(v.costo), arts:v.arts.size})),
+    top_arts: topArts.map(([k,v])=>{
+      const g=v.grupo.includes(' - ')?v.grupo.split(' - ').slice(1).join(' - '):v.grupo;
+      return {code:k, name:v.name.substring(0,55), tipo:v.tipo, grupo:g,
+        kg:Math.round(v.kg), costo:Math.round(v.costo), ops:v.ops.size,
+        costo_kg:v.kg>0?Math.round(v.costo/v.kg*100)/100:0};
+    }),
+    top_comps: topComps.map(([k,v])=>({
+      name:k.substring(0,50), kg:Math.round(v.kg), costo:Math.round(v.costo),
+      costo_kg:v.kg>0?Math.round(v.costo/v.kg*100)/100:0
+    })),
+    stacked_bar, art_comp_detail,
+    detail: records.map(r=>({
+      fecha:r.fecha, op:r.op, art_code:r.art_code, art_name:r.art_name,
+      art_grupo: r.art_grupo.includes(' - ')?r.art_grupo.split(' - ').slice(1).join(' - '):r.art_grupo,
+      comp_name:r.comp_name, kg:r.cantidad_kg,
+      costo_unit:r.costo_unit, costo_total:r.costo_total, sin_costo:r.sin_costo
+    }))
+  };
+}
+
+// Main processing function
+async function procesarArchivos() {
+  const periodo = document.getElementById('uploadPeriodo').value;
+  if(!periodo) { setLog('Elegí el período antes de procesar.', 'err'); return; }
+  if(!dropFiles.rpcp199 || !dropFiles.ragr004) { setLog('Faltán archivos.', 'err'); return; }
+  if(typeof XLSX === 'undefined') { setLog('Librería XLSX no cargada aún, esperá un momento.', 'err'); return; }
+
+  document.getElementById('procBtn').disabled = true;
+  setLog('Leyendo archivos…');
+
+  try {
+    // Load catalog: uploaded file → localStorage cache → empty
+    let catalog = {};
+    if(dropFiles.catalogo) {
+      setLog('Leyendo catálogo…');
+      const buf = await readFile(dropFiles.catalogo);
+      const wb = XLSX.read(buf, {type:'array'});
+      catalog = parseCatalog(wb);
+      try { localStorage.setItem(LS_CATALOG, JSON.stringify(catalog)); } catch(e){}
+      setLog(`Catálogo cargado: ${Object.keys(catalog).length} artículos`);
+    } else {
+      try { catalog = JSON.parse(localStorage.getItem(LS_CATALOG)||'{}'); } catch(e){}
+      if(Object.keys(catalog).length) setLog('Usando catálogo de caché…');
+      else setLog('Sin catálogo — se incluirán todos los artículos.');
+    }
+
+    setLog('Procesando ragr004…');
+    const buf2 = await readFile(dropFiles.ragr004);
+    const wb2 = XLSX.read(buf2, {type:'array'});
+    const unitCosts = parseRagr004(wb2);
+    setLog(`ragr004: ${Object.keys(unitCosts).length} costos unitarios`);
+
+    setLog('Procesando rpcp199…');
+    const buf1 = await readFile(dropFiles.rpcp199);
+    const wb1 = XLSX.read(buf1, {type:'array', cellDates:true});
+    const records = parseRpcp199(wb1, catalog, unitCosts);
+    setLog(`rpcp199: ${records.length} registros`);
+
+    setLog('Construyendo datos del dashboard…');
+    const data = buildDashboardData(records, periodo);
+
+    // Save to localStorage
+    try {
+      localStorage.setItem(LS_DATA_PFX + periodo, JSON.stringify(data));
+    } catch(e) {
+      setLog('Advertencia: no se pudo guardar en caché (' + e.message + ')', 'warn');
+    }
+
+    // Update manifest in localStorage
+    let lsMf = {};
+    try { lsMf = JSON.parse(localStorage.getItem(LS_MANIFEST)||'{}'); } catch(e){}
+    lsMf[periodo] = {
+      periodo, label:data.summary.label,
+      total_kg:data.summary.total_kg, total_costo:data.summary.total_costo,
+      total_arts:data.summary.total_arts, total_ops:data.summary.total_ops,
+      procesado: new Date().toISOString().slice(0,16).replace('T',' '),
+      archivo: periodo+'.json', local:true
+    };
+    try { localStorage.setItem(LS_MANIFEST, JSON.stringify(lsMf)); } catch(e){}
+    manifest = {...manifest, ...lsMf};
+
+    // Update period selector
+    const sel = document.getElementById('periodoSel');
+    if(![...sel.options].some(o=>o.value===periodo)) {
+      const opt=document.createElement('option');
+      opt.value=periodo; opt.textContent=data.summary.label; sel.insertBefore(opt,sel.options[0]);
+    }
+
+    // Load into dashboard
+    currentPeriodo = null; // force reload
+    await changePeriodo(periodo);
+
+    const s = data.summary;
+    setLog(`✓ ${s.label} procesado — ${s.total_arts} artículos · ${s.total_kg.toLocaleString('es-AR')} KG · ARS ${fmtM(s.total_costo)}`, 'ok');
+
+    // Offer JSON download
+    const jsonStr = JSON.stringify(data, null, 0);
+    const blob = new Blob([jsonStr], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=`${periodo}.json`;
+    a.style.cssText='display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);cursor:pointer;text-decoration:underline';
+    a.textContent='⬇ Descargar ' + periodo + '.json (para subir al repo)';
+    document.getElementById('procLog').appendChild(document.createElement('br'));
+    document.getElementById('procLog').appendChild(a);
+
+  } catch(err) {
+    setLog('Error: ' + err.message, 'err');
+    console.error(err);
+  } finally {
+    document.getElementById('procBtn').disabled = false;
+  }
 }
 
 </script>
