@@ -143,6 +143,11 @@
     <div class="kpi"><div class="kpi-label">OPs Procesadas</div><div class="kpi-value" id="kop"></div><div class="kpi-sub">Órdenes de producción</div></div>
     <div class="kpi"><div class="kpi-label">Artículos</div><div class="kpi-value" id="kar"></div><div class="kpi-sub">Referencias únicas</div></div>
   </div>
+  <!-- CF summary row: visible only when CF data loaded -->
+  <div id="cfSummaryRow" style="display:none;background:rgba(247,150,79,.08);border:1px solid rgba(247,150,79,.3);border-radius:10px;padding:14px 22px;margin-bottom:20px;gap:28px;align-items:center;flex-wrap:wrap;">
+    <!-- populated by initDashboard -->
+  </div>
+
   <div class="tabs">
     <button class="tab-btn active" onclick="tab('resumen')">Resumen</button>
     <button class="tab-btn" onclick="tab('componentes')">Componentes por Artículo</button>
@@ -419,11 +424,21 @@ function renderArt(){
   area.style.display='block';ph.style.display='none';
   // info
   const ckgV=d.kg>0?fmt(d.costo/d.kg):'—';
+  const tasasArt=loadCF();
+  const tasaTotalArt=tasasArt?Object.values(tasasArt).reduce((s,t)=>s+(t.tasa_kg||0),0):0;
+  const cfArt=d.kg*tasaTotalArt;
+  const totalArt=d.costo+cfArt;
+  const cKgTotalArt=d.kg>0?totalArt/d.kg:0;
+  const hasCF=tasaTotalArt>0;
   document.getElementById('artInfo').innerHTML=`
     <div class="ast"><div class="ast-l">Código</div><div class="ast-v" style="font-size:13px;color:var(--accent)">${code}</div></div>
     <div class="ast"><div class="ast-l">Costo Total MP</div><div class="ast-v" style="color:var(--accent2)">ARS ${fmtM(d.costo)}</div></div>
     <div class="ast"><div class="ast-l">KG Producidos</div><div class="ast-v">${fmtK(d.kg)} KG</div></div>
-    <div class="ast"><div class="ast-l">Costo / KG</div><div class="ast-v" style="color:var(--accent3)">ARS ${ckgV}</div></div>
+    <div class="ast"><div class="ast-l">Costo/KG MP</div><div class="ast-v" style="color:var(--accent3)">ARS ${ckgV}</div></div>
+    ${hasCF?`
+    <div class="ast" style="border-left:2px solid var(--accent3)"><div class="ast-l">CF Apropiado</div><div class="ast-v" style="color:var(--accent3)">ARS ${fmtM(cfArt)}</div></div>
+    <div class="ast" style="border-left:2px solid var(--accent2)"><div class="ast-l">Costo Total (c/CF)</div><div class="ast-v" style="color:var(--accent2)">ARS ${fmtM(totalArt)}</div></div>
+    <div class="ast" style="border-left:2px solid var(--accent3)"><div class="ast-l">Costo/KG Total</div><div class="ast-v" style="color:var(--accent3)">ARS ${fmtDec2(cKgTotalArt)}</div></div>`:''}
     <div class="ast"><div class="ast-l">OPs</div><div class="ast-v">${d.ops}</div></div>
     <div class="ast"><div class="ast-l">Grupo</div><div class="ast-v" style="font-size:12px">${d.grupo}</div></div>`;
   // pie
@@ -774,6 +789,40 @@ document.getElementById('kkg').textContent=fmtM(s.total_kg)+' KG';
 document.getElementById('kck').textContent='ARS '+fmt(s.costo_por_kg);
 document.getElementById('kop').textContent=s.total_ops;
 document.getElementById('kar').textContent=s.total_arts;
+
+// CF summary row
+{
+  const tasas = loadCF();
+  const cfRow = document.getElementById('cfSummaryRow');
+  if(tasas && Object.values(tasas).some(t=>t.tasa_kg>0)){
+    const totMP  = s.total_costo;
+    const totKG  = s.total_kg;
+    const tasaTotal = Object.values(tasas).reduce((sum,t)=>sum+(t.tasa_kg||0),0);
+    const totCF  = totKG * tasaTotal;
+    const totTot = totMP + totCF;
+    cfRow.style.display='flex';
+    cfRow.innerHTML=`
+      <div style="flex:1;min-width:170px">
+        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costo Total (MP + CF)</div>
+        <div style="font-size:22px;font-weight:700;color:var(--accent2)">ARS ${fmtM(totTot)}</div>
+      </div>
+      <div style="flex:1;min-width:150px">
+        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costos Fijos Apropiados</div>
+        <div style="font-size:22px;font-weight:700;color:var(--accent3)">ARS ${fmtM(totCF)}</div>
+        <div style="font-size:11px;color:var(--text3)">${(totCF/totTot*100).toFixed(1)}% del costo total</div>
+      </div>
+      <div style="flex:1;min-width:150px">
+        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costo Promedio Total</div>
+        <div style="font-size:22px;font-weight:700;color:var(--accent3)">ARS ${fmt(totKG>0?totTot/totKG:0)}/KG</div>
+        <div style="font-size:11px;color:var(--text3)">vs. ARS ${fmt(s.costo_por_kg)}/KG solo MP</div>
+      </div>
+      <div style="align-self:center;white-space:nowrap">
+        <a href="costos_fijos.html" style="font-size:12px;color:var(--accent);text-decoration:none">✏ Editar CF →</a>
+      </div>`;
+  } else {
+    cfRow.style.display='none';
+  }
+}
 
 
 // Costo por grupo donut
