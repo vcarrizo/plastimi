@@ -985,7 +985,7 @@ function parseCatalog(wb) {
 
 // Parse ragr004
 function parseRagr004(wb) {
-  const ws = wb.Sheets[wb.SheetNames[0]];
+  const ws = wb.Sheets[wb.SheetNames.find(n=>n.toLowerCase().includes('ragr')) || wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null});
   const unitCosts = {};
   const SECS = ['02.01.01','02.01.02','02.01.03','02.03.03'];
@@ -1008,8 +1008,8 @@ function parseRagr004(wb) {
 // Parse rpcp199
 function parseRpcp199(wb, catalog, unitCosts) {
   const ws = wb.Sheets[wb.SheetNames[0]];
-  // cellDates:true converts date serials to JS Date objects during read
-  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:null});
+  // raw:true + cellDates:true (set on workbook read) → date cells arrive as JS Date objects
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:null});
   const hasCat = Object.keys(catalog).length > 0;
   const records = [];
   let curOp=null, curArt=null;
@@ -1021,16 +1021,12 @@ function parseRpcp199(wb, catalog, unitCosts) {
       curArt = row[19] ? String(row[19]) : null;
       continue;
     }
-    // Date detection: raw:false gives strings; dates come as "YYYY-MM-DD" formatted by SheetJS
-    // We also check numeric dates (serial)
-    const bRaw = row[1];
-    const isDate = bRaw && (
-      /^\d{4}-\d{2}-\d{2}/.test(String(bRaw)) ||
-      (typeof bRaw === 'number' && bRaw > 40000)
-    );
+    // With cellDates:true on read + raw:true on sheet_to_json, date cells are JS Date objects
+    const isDate = b instanceof Date;
     if(!isDate || !curArt) continue;
 
-    const comp=row[16], cant=parseFloat(row[23]);
+    const comp=row[16];
+    const cant = typeof row[23]==='number' ? row[23] : parseFloat(row[23]);
     if(!comp || !cant || isNaN(cant)) continue;
 
     const artParts = curArt.split(' - ');
@@ -1048,7 +1044,8 @@ function parseRpcp199(wb, catalog, unitCosts) {
     const cu = unitCosts[compCode];
     const ct = cu ? cu * cant : 0;
 
-    const fecha = String(bRaw).slice(0,10);
+    // Format date as YYYY-MM-DD (using UTC to avoid timezone shifts)
+    const fecha = b.toISOString().slice(0,10);
 
     records.push({
       fecha, op:curOp,
