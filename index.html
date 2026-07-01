@@ -185,10 +185,14 @@
       </div>
       <div id="artArea" style="display:none">
         <div class="art-info" id="artInfo"></div>
-        <div class="g2">
+        <div id="artGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
           <div>
             <p class="sec" style="margin-bottom:10px">Distribución del costo por componente</p>
             <div class="cw h320"><canvas id="cArtPie"></canvas></div>
+          </div>
+          <div id="artCFDiv" style="display:none">
+            <p class="sec" style="margin-bottom:10px">Materia Prima vs. Costos Fijos</p>
+            <div class="cw h320"><canvas id="cArtCFPie"></canvas></div>
           </div>
           <div>
             <p class="sec" style="margin-bottom:10px">Composición de materias primas</p>
@@ -441,7 +445,7 @@ function renderArt(){
     <div class="ast" style="border-left:2px solid var(--accent3)"><div class="ast-l">Costo/KG Total</div><div class="ast-v" style="color:var(--accent3)">ARS ${fmtDec2(cKgTotalArt)}</div></div>`:''}
     <div class="ast"><div class="ast-l">OPs</div><div class="ast-v">${d.ops}</div></div>
     <div class="ast"><div class="ast-l">Grupo</div><div class="ast-v" style="font-size:12px">${d.grupo}</div></div>`;
-  // pie
+  // pie MP componentes
   if(artPie)artPie.destroy();
   artPie=new Chart(document.getElementById('cArtPie'),{
     type:'doughnut',
@@ -451,6 +455,32 @@ function renderArt(){
       plugins:{legend:{position:'right',labels:{color:'#8b8fa8',font:{size:10},boxWidth:10,padding:8}},
         tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
   });
+
+  // pie MP vs CF
+  const artCFDiv=document.getElementById('artCFDiv');
+  const artGrid=document.getElementById('artGrid');
+  if(hasCF){
+    artCFDiv.style.display='block';
+    artGrid.style.gridTemplateColumns='1fr 1fr 1fr';
+    if(_charts['cArtCFPie'])_charts['cArtCFPie'].destroy();
+    _charts['cArtCFPie']=new Chart(document.getElementById('cArtCFPie'),{
+      type:'doughnut',
+      data:{
+        labels:['Materia Prima','Costos Fijos'],
+        datasets:[{data:[d.costo,cfArt],backgroundColor:['#4f7ef7','#f7964f'],borderWidth:2,borderColor:'#1a1d27'}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{position:'bottom',labels:{color:'#8b8fa8',font:{size:12},boxWidth:14,padding:12}},
+          tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${(ctx.raw/totalArt*100).toFixed(1)}%)`}}
+        }
+      }
+    });
+  } else {
+    artCFDiv.style.display='none';
+    artGrid.style.gridTemplateColumns='1fr 1fr';
+    if(_charts['cArtCFPie']){_charts['cArtCFPie'].destroy();delete _charts['cArtCFPie'];}
+  }
   // list
   const mx=d.comps[0]?.costo||1;
   document.getElementById('compList').innerHTML=d.comps.map((c,i)=>`
