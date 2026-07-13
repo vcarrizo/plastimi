@@ -858,22 +858,81 @@ function renderDatos() {
   const entries = Object.values(manifest).sort((a,b)=>b.periodo.localeCompare(a.periodo));
   if(!entries.length){el.innerHTML='<p style="color:var(--text3)">No hay períodos cargados.</p>';return;}
   const fmtN = n => n?.toLocaleString('es-AR') || '—';
-  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">' +
-    entries.map(m => `
-    <div onclick="changePeriodo('${m.periodo}')" style="background:var(--surface2);border:2px solid ${currentPeriodo===m.periodo?'var(--accent)':'var(--border)'};border-radius:8px;padding:14px 16px;cursor:pointer;transition:.15s"
-      onmouseover="this.style.borderColor='var(--accent)'"
-      onmouseout="this.style.borderColor='${currentPeriodo===m.periodo?'var(--accent)':'var(--border)'}'">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:14px;font-weight:600">${m.label}</span>
-        ${(currentPeriodo===m.periodo?'<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px">Activo</span>':'')+(m.local?'<span style="background:rgba(52,201,126,.15);color:var(--accent2);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(52,201,126,.3);margin-left:4px">Local</span>':'')}
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2)">
-        <div>KG: <span style="color:var(--text)">${fmtN(m.total_kg)}</span></div>
-        <div>Artículos: <span style="color:var(--text)">${m.total_arts||'—'}</span></div>
-        <div>OPs: <span style="color:var(--text)">${m.total_ops||'—'}</span></div>
-        <div style="color:var(--text3);font-size:10px">Proc: ${(m.procesado||'').substring(0,10)}</div>
-      </div>
-    </div>`).join('') + '</div>';
+  const isActive = p => currentPeriodo===p;
+
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">' +
+    entries.map(m => {
+      const active = isActive(m.periodo);
+      const borderColor = active ? 'var(--accent)' : 'var(--border)';
+      const archivos = m.archivos || {};
+      const fileList = [
+        archivos.rpcp199 ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.rpcp199}</div>` : '<div style="font-size:10px;color:var(--text3)">· rpcp199 no registrado</div>',
+        archivos.ragr004 ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.ragr004}</div>` : '<div style="font-size:10px;color:var(--text3)">· ragr004 no registrado</div>',
+        archivos.catalogo ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.catalogo}</div>` : ''
+      ].filter(Boolean).join('');
+
+      return `
+      <div style="background:var(--surface2);border:2px solid ${borderColor};border-radius:8px;overflow:hidden;transition:.15s">
+        <!-- Header clickeable -->
+        <div onclick="changePeriodo('${m.periodo}')" style="padding:14px 16px;cursor:pointer"
+          onmouseover="this.parentElement.style.borderColor='var(--accent)'"
+          onmouseout="this.parentElement.style.borderColor='${borderColor}'">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:600">${m.label}</span>
+            ${active ? '<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px">Activo</span>' : ''}
+            ${m.local ? '<span style="background:rgba(52,201,126,.12);color:var(--accent2);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(52,201,126,.3)">Local</span>' : '<span style="background:rgba(79,126,247,.12);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(79,126,247,.3)">GitHub</span>'}
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2);margin-bottom:8px">
+            <div>KG: <span style="color:var(--text)">${fmtN(m.total_kg)}</span></div>
+            <div>Artículos: <span style="color:var(--text)">${m.total_arts||'—'}</span></div>
+            <div>OPs: <span style="color:var(--text)">${m.total_ops||'—'}</span></div>
+            <div>Proc: <span style="color:var(--text3)">${(m.procesado||'').substring(0,10)}</span></div>
+          </div>
+          ${fileList ? `<div style="border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:3px">${fileList}</div>` : ''}
+        </div>
+        <!-- Acciones (solo períodos locales) -->
+        ${m.local ? `
+        <div style="border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;background:rgba(0,0,0,.15)">
+          <button onclick="reprocesarPeriodo('${m.periodo}')"
+            style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--accent);padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer">
+            ↺ Re-procesar
+          </button>
+          <button onclick="deletePeriodo('${m.periodo}')"
+            style="background:var(--surface);border:1px solid rgba(224,92,92,.4);color:var(--accent4);padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer">
+            🗑
+          </button>
+        </div>` : ''}
+      </div>`;
+    }).join('') + '</div>';
+}
+
+function deletePeriodo(periodo) {
+  if(!confirm(`¿Eliminás los datos de ${periodo} del almacenamiento local?`)) return;
+  localStorage.removeItem(LS_DATA_PFX + periodo);
+  let lsMf = {};
+  try { lsMf = JSON.parse(localStorage.getItem(LS_MANIFEST)||'{}'); } catch(e){}
+  delete lsMf[periodo];
+  try { localStorage.setItem(LS_MANIFEST, JSON.stringify(lsMf)); } catch(e){}
+  delete manifest[periodo];
+  // Si era el período activo, limpiamos
+  if(currentPeriodo === periodo) {
+    currentPeriodo = null; DATA = null;
+    document.getElementById('periodoBadge').textContent = 'Sin datos';
+  }
+  // Sacamos del selector
+  const sel = document.getElementById('periodoSel');
+  const opt = [...sel.options].find(o=>o.value===periodo);
+  if(opt) sel.removeChild(opt);
+  renderDatos();
+}
+
+function reprocesarPeriodo(periodo) {
+  // Pre-rellena el selector de período en el formulario y hace scroll al área de carga
+  const inp = document.getElementById('uploadPeriodo');
+  if(inp) inp.value = periodo;
+  // Sube al área de carga
+  document.getElementById('dropZone')?.scrollIntoView({behavior:'smooth', block:'center'});
+  setLog('Cargá los archivos nuevamente para re-procesar ' + periodo);
 }
 
 // ── INIT PER PERIOD ───────────────────────────────────────────────────────────
@@ -1364,7 +1423,12 @@ async function procesarArchivos() {
       total_kg:data.summary.total_kg, total_costo:data.summary.total_costo,
       total_arts:data.summary.total_arts, total_ops:data.summary.total_ops,
       procesado: new Date().toISOString().slice(0,16).replace('T',' '),
-      archivo: periodo+'.json', local:true
+      archivo: periodo+'.json', local:true,
+      archivos: {
+        rpcp199: dropFiles.rpcp199?.name || null,
+        ragr004: dropFiles.ragr004?.name || null,
+        catalogo: dropFiles.catalogo?.name || null
+      }
     };
     try { localStorage.setItem(LS_MANIFEST, JSON.stringify(lsMf)); } catch(e){}
     manifest = {...manifest, ...lsMf};
