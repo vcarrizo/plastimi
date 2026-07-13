@@ -117,77 +117,51 @@
   .periodo-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;outline:none;width:120px;}
   .periodo-input:focus{border-color:var(--accent);}
 
-  /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
-  @media (max-width:768px){
-    /* Header */
-    .header{flex-direction:column;align-items:flex-start;padding:10px 14px;gap:8px;}
-    .header-left{gap:10px;}
-    .header-logo{height:36px;}
-    .header-divider{display:none;}
-    .header h1{font-size:13px;}
-    .header p{font-size:10px;}
-    .header-right{width:100%;justify-content:flex-start;}
-    .header-right select{flex:1;font-size:13px;padding:6px 10px;}
-
-    /* Main */
-    .main{padding:14px 12px;}
-
-    /* KPIs: 2 columnas */
-    .kpi-row{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
-    .kpi{padding:12px 14px;}
-    .kpi-value{font-size:20px;}
-    .kpi-label{font-size:10px;}
-
-    /* CF summary */
-    #cfSummaryRow{flex-direction:column!important;gap:10px;padding:12px 14px;}
-
-    /* Tabs: scroll horizontal */
-    .tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-    .tabs::-webkit-scrollbar{display:none;}
-    .tab-btn{white-space:nowrap;padding:8px 14px;font-size:11px;flex-shrink:0;}
-
-    /* Grids a 1 columna */
-    .g2{grid-template-columns:1fr;}
-    #artGrid{grid-template-columns:1fr!important;}
-    #cfCharts{grid-template-columns:1fr!important;}
-
-    /* Alturas de gráficos reducidas */
-    .h240{height:200px;}.h280{height:220px;}.h320{height:250px;}
-    .h360{height:280px;}.h400{height:280px;}.h440{height:300px;}
-
-    /* Cards CF */
-    #cfTasasCards{grid-template-columns:repeat(2,1fr)!important;}
-    #cfKpis{grid-template-columns:repeat(2,1fr)!important;}
-
-    /* Tabla */
-    .thead{flex-direction:column;align-items:flex-start;gap:8px;}
-    input[type=text]{width:100%;}
-    .ctrls{width:100%;}
-    td{padding:7px 10px;font-size:11px;}
-    thead th{padding:8px 10px;font-size:10px;}
-    td.tn,td.cn{max-width:120px;}
-    .pagin{flex-direction:column;gap:8px;align-items:flex-start;}
-
-    /* Art info chips */
-    .ast{padding:7px 10px;}
-    .ast-v{font-size:13px;}
-
-    /* Drop zone */
-    .drop-zone{padding:24px 14px;}
-    .drop-icon{font-size:28px;}
-
-    /* Footer */
-    .footer{padding:14px;font-size:10px;}
-  }
-
-  @media (max-width:480px){
-    .kpi-value{font-size:17px;}
-    .header h1{font-size:12px;}
-    .header p{display:none;}
-    #cfTasasCards{grid-template-columns:1fr!important;}
-    .h240{height:180px;}.h280{height:200px;}.h320{height:220px;}
-    .h360{height:250px;}.h400{height:260px;}.h440{height:270px;}
-  }
+  /* COTIZADOR */
+  .add-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:16px;}
+  .field label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;}
+  .field select,.field input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:12px;outline:none;}
+  .field select:focus,.field input:focus{border-color:var(--accent);}
+  .btn{padding:9px 18px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:.15s;}
+  .btn:hover{background:#3a6adf;}
+  .empty-row td{text-align:center;color:var(--text3);padding:20px;}
+  .del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;}
+  .del:hover{color:var(--accent4);}
+  .cf-periodo-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex-wrap:wrap;}
+  .cf-periodo-row label{font-size:11px;color:var(--text2);white-space:nowrap;}
+  .cf-periodo-row select{background:var(--surface3,var(--surface2));border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;outline:none;cursor:pointer;}
+  .cf-periodo-row .hint{font-size:11px;color:var(--text3);}
+  .proc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+  .proc{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px;transition:.15s;}
+  .proc.on{border-color:var(--accent);background:rgba(79,126,247,.08);}
+  .proc.locked{border-color:#38bdf8;background:rgba(56,189,248,.06);}
+  .proc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;}
+  .proc-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+  .proc-dot{width:9px;height:9px;border-radius:50%;}
+  .proc-lock-badge{font-size:10px;color:#38bdf8;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);padding:2px 8px;border-radius:10px;font-weight:600;}
+  .rubro-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+  .rubro-line{display:flex;align-items:center;gap:8px;}
+  .rubro-nombre{flex:1;font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .rubro-input{width:82px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 7px;border-radius:5px;font-size:11px;outline:none;text-align:right;font-variant-numeric:tabular-nums;}
+  .rubro-input:focus{border-color:var(--accent);}
+  .rubro-unit{font-size:10px;color:var(--text3);width:38px;flex-shrink:0;}
+  .proc-subtotal{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text2);}
+  .proc-subtotal b{font-size:14px;color:var(--accent3);}
+  .res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  .res-kpi{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;}
+  .res-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;}
+  .res-val{font-size:20px;font-weight:700;}
+  .breakdown{display:flex;flex-direction:column;gap:8px;}
+  .bd-row{display:flex;align-items:center;gap:10px;font-size:12px;}
+  .bd-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .bd-name{flex:1;color:var(--text2);}
+  .bd-bar-t{width:180px;background:var(--surface2);border-radius:3px;height:7px;}
+  .bd-bar-f{height:7px;border-radius:3px;}
+  .bd-val{width:110px;text-align:right;font-variant-numeric:tabular-nums;}
+  .margin-row{display:flex;align-items:center;gap:14px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap;}
+  .margin-row label{font-size:11px;color:var(--text2);}
+  .margin-row input{width:80px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:12px;outline:none;text-align:right;}
+  .precio-final{font-size:18px;font-weight:700;color:var(--accent2);}
 
 </style>
 </head>
@@ -215,15 +189,11 @@
     <div class="kpi"><div class="kpi-label">OPs Procesadas</div><div class="kpi-value" id="kop"></div><div class="kpi-sub">Órdenes de producción</div></div>
     <div class="kpi"><div class="kpi-label">Artículos</div><div class="kpi-value" id="kar"></div><div class="kpi-sub">Referencias únicas</div></div>
   </div>
-  <!-- CF summary row: visible only when CF data loaded -->
-  <div id="cfSummaryRow" style="display:none;background:rgba(247,150,79,.08);border:1px solid rgba(247,150,79,.3);border-radius:10px;padding:14px 22px;margin-bottom:20px;gap:28px;align-items:center;flex-wrap:wrap;">
-    <!-- populated by initDashboard -->
-  </div>
-
   <div class="tabs">
     <button class="tab-btn active" onclick="tab('resumen')">Resumen</button>
     <button class="tab-btn" onclick="tab('componentes')">Componentes por Artículo</button>
     <button class="tab-btn" onclick="tab('apropiacion')">Apropiación Costos Fijos</button>
+    <button class="tab-btn" onclick="tab('cotizador')">Cotizador</button>
     <button class="tab-btn" onclick="tab('detalle')">Detalle</button>
     <button class="tab-btn" onclick="tab('datos')">Datos</button>
   </div>
@@ -257,14 +227,10 @@
       </div>
       <div id="artArea" style="display:none">
         <div class="art-info" id="artInfo"></div>
-        <div id="artGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+        <div class="g2">
           <div>
             <p class="sec" style="margin-bottom:10px">Distribución del costo por componente</p>
-            <div class="cw h360"><canvas id="cArtPie"></canvas></div>
-          </div>
-          <div id="artCFDiv" style="display:none">
-            <p class="sec" style="margin-bottom:10px">Materia Prima vs. Costos Fijos</p>
-            <div class="cw h360"><canvas id="cArtCFPie"></canvas></div>
+            <div class="cw h320"><canvas id="cArtPie"></canvas></div>
           </div>
           <div>
             <p class="sec" style="margin-bottom:10px">Composición de materias primas</p>
@@ -369,6 +335,67 @@
     </div>
 
   </div>
+
+  <!-- TAB COTIZADOR -->
+  <div id="tab-cotizador" class="tab-content">
+    <div class="card mb">
+      <h3>Componentes (Materias Primas)</h3>
+      <p class="sub">Elegí los componentes del trabajo y cuántos KG de cada uno se van a usar. El costo $/KG se autocompleta con el costo del período seleccionado arriba, pero podés editarlo.</p>
+      <div class="add-row">
+        <div class="field">
+          <label>Componente</label>
+          <select id="czCompSel" onchange="czOnCompSelect()"><option value="">— elegí un componente —</option></select>
+        </div>
+        <div class="field">
+          <label>KG a usar</label>
+          <input id="czCompKg" type="text" inputmode="decimal" placeholder="0">
+        </div>
+        <div class="field">
+          <label>$/KG</label>
+          <input id="czCompCostoKg" type="text" inputmode="decimal" placeholder="0,00">
+        </div>
+        <button class="btn" onclick="czAddItem()">+ Agregar</button>
+      </div>
+      <table>
+        <thead><tr><th>Componente</th><th class="num">KG</th><th class="num">$/KG</th><th class="num">Subtotal</th><th></th></tr></thead>
+        <tbody id="czItemsBody"><tr class="empty-row"><td colspan="5">Todavía no agregaste componentes</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card mb">
+      <h3>Procesos por los que pasa el trabajo</h3>
+      <p class="sub">Tildá los procesos que aplican. Cada uno muestra su costo fijo unitario por rubro (mano de obra, energía, mantenimiento, amortización, etc.) en ARS/KG — por defecto trae los valores del último mes cargado en Costos Fijos por Centro, y podés editar cualquier rubro para simular otro escenario.</p>
+      <div class="cf-periodo-row">
+        <label>Tasas de costos fijos del mes:</label>
+        <select id="czCfPeriodoSel" onchange="czOnCfPeriodoChange(this.value)"></select>
+        <span class="hint" id="czCfPeriodoHint"></span>
+      </div>
+      <div class="proc-grid" id="czProcGrid"></div>
+    </div>
+
+    <div class="card mb">
+      <h3>Resultado de la simulación</h3>
+      <div id="czResPlaceholder" class="placeholder">Agregá al menos un componente para ver el costo simulado</div>
+      <div id="czResArea" style="display:none">
+        <div class="res-grid">
+          <div class="res-kpi"><div class="res-label">KG del trabajo</div><div class="res-val" id="czRKg">—</div></div>
+          <div class="res-kpi"><div class="res-label">Costo Materia Prima</div><div class="res-val blue" id="czRMp">—</div></div>
+          <div class="res-kpi"><div class="res-label">Costos Fijos Apropiados</div><div class="res-val orange" id="czRCf">—</div></div>
+          <div class="res-kpi"><div class="res-label">Costo Total</div><div class="res-val green" id="czRTot">—</div></div>
+        </div>
+        <p class="sec">Composición del costo</p>
+        <div class="breakdown" id="czBreakdown"></div>
+        <div class="margin-row">
+          <div style="flex:1;font-size:13px;color:var(--text2)">Costo promedio: <b id="czRKgTotal" style="color:var(--text)">—</b> ARS/KG</div>
+          <label>Margen deseado</label>
+          <input id="czMargen" type="text" inputmode="decimal" placeholder="0" oninput="czCalc()">
+          <span style="color:var(--text2)">%</span>
+          <span style="color:var(--text3)">→ Precio sugerido:</span>
+          <span class="precio-final" id="czRPrecio">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
   <!-- TAB DATOS -->
   <div id="tab-datos" class="tab-content">
@@ -379,29 +406,7 @@
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;">
         <div>
           <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Período</label>
-          <div style="display:flex;gap:8px;">
-            <select id="uploadAnio" class="fs" style="width:80px">
-              <option>2024</option>
-              <option>2025</option>
-              <option selected>2026</option>
-              <option>2027</option>
-              <option>2028</option>
-            </select>
-            <select id="uploadMes" class="fs" style="width:110px">
-              <option value="01">Enero</option>
-              <option value="02">Febrero</option>
-              <option value="03">Marzo</option>
-              <option value="04">Abril</option>
-              <option value="05">Mayo</option>
-              <option value="06" selected>Junio</option>
-              <option value="07">Julio</option>
-              <option value="08">Agosto</option>
-              <option value="09">Septiembre</option>
-              <option value="10">Octubre</option>
-              <option value="11">Noviembre</option>
-              <option value="12">Diciembre</option>
-            </select>
-          </div>
+          <input type="month" id="uploadPeriodo" class="periodo-input" value="2026-06">
         </div>
         <div style="flex:1;min-width:220px;font-size:12px;color:var(--text3);padding-top:18px">
           Arrastrá los archivos <strong style="color:var(--text2)">rpcp199</strong> + <strong style="color:var(--text2)">ragr004</strong>.<br>
@@ -450,9 +455,6 @@ function mkChart(id,type,labels,datasets,opts){
 }
 
 // ── MODULE STATE ─────────────────────────────────────────────────────────────
-const LS_DATA_PFX = 'plastimi_data_';
-const LS_MANIFEST  = 'plastimi_manifest';
-const LS_CATALOG   = 'plastimi_catalog';
 let DATA = null;
 let currentPeriodo = null;
 let manifest = {};
@@ -522,75 +524,33 @@ function renderArt(){
   area.style.display='block';ph.style.display='none';
   // info
   const ckgV=d.kg>0?fmt(d.costo/d.kg):'—';
-  const tasasArt=loadCF();
-  const tasaTotalArt=tasasArt?Object.values(tasasArt).reduce((s,t)=>s+(t.tasa_kg||0),0):0;
-  const cfArt=d.kg*tasaTotalArt;
-  const totalArt=d.costo+cfArt;
-  const cKgTotalArt=d.kg>0?totalArt/d.kg:0;
-  const hasCF=tasaTotalArt>0;
   document.getElementById('artInfo').innerHTML=`
     <div class="ast"><div class="ast-l">Código</div><div class="ast-v" style="font-size:13px;color:var(--accent)">${code}</div></div>
     <div class="ast"><div class="ast-l">Costo Total MP</div><div class="ast-v" style="color:var(--accent2)">ARS ${fmtM(d.costo)}</div></div>
     <div class="ast"><div class="ast-l">KG Producidos</div><div class="ast-v">${fmtK(d.kg)} KG</div></div>
-    <div class="ast"><div class="ast-l">Costo/KG MP</div><div class="ast-v" style="color:var(--accent3)">ARS ${ckgV}</div></div>
-    ${hasCF?`
-    <div class="ast" style="border-left:2px solid var(--accent3)"><div class="ast-l">CF Apropiado</div><div class="ast-v" style="color:var(--accent3)">ARS ${fmtM(cfArt)}</div></div>
-    <div class="ast" style="border-left:2px solid var(--accent2)"><div class="ast-l">Costo Total (c/CF)</div><div class="ast-v" style="color:var(--accent2)">ARS ${fmtM(totalArt)}</div></div>
-    <div class="ast" style="border-left:2px solid var(--accent3)"><div class="ast-l">Costo/KG Total</div><div class="ast-v" style="color:var(--accent3)">ARS ${fmtDec2(cKgTotalArt)}</div></div>`:''}
+    <div class="ast"><div class="ast-l">Costo / KG</div><div class="ast-v" style="color:var(--accent3)">ARS ${ckgV}</div></div>
     <div class="ast"><div class="ast-l">OPs</div><div class="ast-v">${d.ops}</div></div>
     <div class="ast"><div class="ast-l">Grupo</div><div class="ast-v" style="font-size:12px">${d.grupo}</div></div>`;
-  // pie MP componentes
+  // pie
   if(artPie)artPie.destroy();
   artPie=new Chart(document.getElementById('cArtPie'),{
     type:'doughnut',
-    data:{labels:d.comps.map(c=>c.name),
+    data:{labels:d.comps.map(c=>c.name.substring(0,30)),
       datasets:[{data:d.comps.map(c=>c.costo),backgroundColor:C,borderWidth:2,borderColor:'#1a1d27'}]},
     options:{responsive:true,maintainAspectRatio:false,
-      layout:{padding:{bottom:40}},
-      plugins:{legend:{display:false},
-        tooltip:{yAlign:'bottom',callbacks:{label:ctx=>` ${d.comps[ctx.dataIndex].name} · ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
+      plugins:{legend:{position:'right',labels:{color:'#8b8fa8',font:{size:10},boxWidth:10,padding:8}},
+        tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
   });
-
-  // pie MP vs CF
-  const artCFDiv=document.getElementById('artCFDiv');
-  const artGrid=document.getElementById('artGrid');
-  if(hasCF){
-    artCFDiv.style.display='block';
-    artGrid.style.gridTemplateColumns='1fr 1fr 1fr';
-    if(_charts['cArtCFPie'])_charts['cArtCFPie'].destroy();
-    _charts['cArtCFPie']=new Chart(document.getElementById('cArtCFPie'),{
-      type:'doughnut',
-      data:{
-        labels:['Materia Prima','Costos Fijos'],
-        datasets:[{data:[d.costo,cfArt],backgroundColor:['#4f7ef7','#f7964f'],borderWidth:2,borderColor:'#1a1d27'}]
-      },
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{
-          legend:{position:'right',labels:{color:'#8b8fa8',font:{size:12},boxWidth:14,padding:14}},
-          tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${(ctx.raw/totalArt*100).toFixed(1)}%)`}}
-        }
-      }
-    });
-  } else {
-    artCFDiv.style.display='none';
-    artGrid.style.gridTemplateColumns='1fr 1fr';
-    if(_charts['cArtCFPie']){_charts['cArtCFPie'].destroy();delete _charts['cArtCFPie'];}
-  }
   // list
   const mx=d.comps[0]?.costo||1;
-  document.getElementById('compList').innerHTML=d.comps.map((c,i)=>{
-    const cu = c.kg>0 ? c.costo/c.kg : null;
-    return `<div class="comp-row">
+  document.getElementById('compList').innerHTML=d.comps.map((c,i)=>`
+    <div class="comp-row">
       <div class="cdot" style="background:${C[i%C.length]}"></div>
-      <div style="flex:1;overflow:hidden;min-width:0">
-        <div class="cname" title="${c.name}">${c.name}</div>
-        ${cu?`<div style="font-size:10px;color:var(--text3);margin-top:1px">ARS ${fmt(cu)}/KG</div>`:''}
-      </div>
+      <div class="cname" title="${c.name}">${c.name}</div>
       <div class="cbar-t"><div class="cbar-f" style="width:${(c.costo/mx*100).toFixed(0)}%;background:${C[i%C.length]}"></div></div>
       <div class="cpct">${c.pct}%</div>
       <div class="cval">ARS ${fmtM(c.costo)}</div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 
@@ -644,11 +604,12 @@ function renderT(){
 
 
 function tab(t){
-  const tabs=['resumen','componentes','apropiacion','detalle','datos'];
+  const tabs=['resumen','componentes','apropiacion','cotizador','detalle','datos'];
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===t));
   tabs.forEach(n=>{document.getElementById('tab-'+n).classList.toggle('active',n===t);});
   if(t==='detalle')renderT();
   if(t==='apropiacion')renderCF();
+  if(t==='cotizador'){czPopulateCompSelect();czCalc();}
   if(t==='datos')renderDatos();
 }
 
@@ -879,6 +840,240 @@ function cfRenderTable(){
 function fmtDec2(n){ return n?n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}):'0,00'; }
 
 
+// ── COTIZADOR ────────────────────────────────────────────────────────────────
+// Simulador de costo por trabajo: materia prima (usa el período/DATA ya cargado
+// arriba) + apropiación de costos fijos por proceso, con tasas por rubro
+// (mano de obra, energía, mantenimiento, amortización, etc.) que por defecto
+// traen el último mes cargado en costos_fijos.html, editables una por una.
+
+const czPROCESOS = [
+  {id:'ext', label:'Extrusión',  color:'#4f7ef7', alwaysOn:false},
+  {id:'lam', label:'Laminación', color:'#34c97e', alwaysOn:false},
+  {id:'imp', label:'Impresión',  color:'#f7964f', alwaysOn:false},
+  {id:'conf',label:'Confección', color:'#a78bfa', alwaysOn:false},
+  {id:'est', label:'Estructura', color:'#38bdf8', alwaysOn:true},
+];
+const czRUBROS_DEFAULT = ['Mano de obra','Energía','Mantenimiento','Amortización'];
+
+let czCfPeriodo = null;
+let czTasasDetalle = {};
+let czRubroOverrides = {};
+let czChecked = {ext:true, lam:true, imp:true, conf:true, est:true};
+let czItems = [];
+
+function czScanCfPeriodos(){
+  const out = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf('plastimi_cf_')===0) out.push(k.substring('plastimi_cf_'.length));
+  }
+  return out.sort((a,b)=>b.localeCompare(a));
+}
+
+function czPopulateCfPeriodoSel(){
+  const periodos = czScanCfPeriodos();
+  const sel = document.getElementById('czCfPeriodoSel');
+  const hint = document.getElementById('czCfPeriodoHint');
+  if(!periodos.length){
+    sel.innerHTML = '<option value="">Sin datos guardados</option>';
+    hint.textContent = 'No hay costos fijos cargados en este navegador — cargalos en costos_fijos.html o ingresá tasas manuales abajo.';
+    czCfPeriodo = null;
+    czTasasDetalle = {};
+    return;
+  }
+  sel.innerHTML = periodos.map(p=>`<option value="${p}">${p}</option>`).join('');
+  czCfPeriodo = periodos[0];
+  sel.value = czCfPeriodo;
+  hint.textContent = 'Por defecto se usa el último mes disponible; podés elegir otro.';
+  czLoadTasasDetalle(czCfPeriodo);
+}
+
+function czOnCfPeriodoChange(periodo){
+  czCfPeriodo = periodo;
+  czRubroOverrides = {};
+  czLoadTasasDetalle(periodo);
+  czRenderProcesos();
+  czCalc();
+}
+
+function czLoadTasasDetalle(periodo){
+  czTasasDetalle = {};
+  const CENTROS_IDS = ['ext','lam','imp','conf','est'];
+  let saved = {};
+  try{
+    const raw = periodo ? localStorage.getItem('plastimi_cf_'+periodo) : null;
+    if(raw) saved = JSON.parse(raw);
+  }catch(e){ saved = {}; }
+
+  let totalKgProd = 0;
+  CENTROS_IDS.filter(c=>c!=='est').forEach(c=>{ totalKgProd += (saved[c]?.kgBase||0); });
+
+  CENTROS_IDS.forEach(c=>{
+    const st = saved[c];
+    const kgBase = c==='est' ? totalKgProd : (st?.kgBase||0);
+    const rubrosSrc = (st?.rubros && st.rubros.length) ? st.rubros : czRUBROS_DEFAULT.map(n=>({nombre:n, monto:0}));
+    const rubros = rubrosSrc.map(r=>({
+      nombre: r.nombre || '(sin nombre)',
+      monto: parseFloat(r.monto)||0,
+      tasaKg: kgBase>0 ? (parseFloat(r.monto)||0)/kgBase : 0
+    }));
+    czTasasDetalle[c] = { kgBase, rubros };
+  });
+}
+
+function czGetTasa(id){
+  const rubros = czTasasDetalle[id]?.rubros || [];
+  return rubros.reduce((s,r,i)=>{
+    const key = id+'__'+i;
+    const ov = czRubroOverrides[key];
+    return s + (ov!=null ? ov : r.tasaKg);
+  }, 0);
+}
+
+function czRenderProcesos(){
+  const grid = document.getElementById('czProcGrid');
+  if(!grid) return;
+  grid.innerHTML = czPROCESOS.map(p=>{
+    const rubros = czTasasDetalle[p.id]?.rubros || [];
+    const subtotal = czGetTasa(p.id);
+    const rubroRows = rubros.map((r,i)=>{
+      const key = p.id+'__'+i;
+      const val = czRubroOverrides[key]!=null ? czRubroOverrides[key] : r.tasaKg;
+      return `
+      <div class="rubro-line">
+        <span class="rubro-nombre" title="${r.nombre}">${r.nombre}</span>
+        <input class="rubro-input" type="text" inputmode="decimal" value="${val.toFixed(2)}"
+          onchange="czSetRubroOverride('${p.id}', ${i}, this.value)">
+        <span class="rubro-unit">$/KG</span>
+      </div>`;
+    }).join('');
+    const isOn = p.alwaysOn || czChecked[p.id];
+    return `
+    <div class="proc ${isOn?'on':''} ${p.alwaysOn?'locked':''}" id="czProc-${p.id}">
+      <div class="proc-top" ${p.alwaysOn?'':`onclick="czToggleProc('${p.id}')"`}>
+        <div class="proc-name"><div class="proc-dot" style="background:${p.color}"></div>${p.label}</div>
+        ${p.alwaysOn
+          ? '<span class="proc-lock-badge">Siempre incluido</span>'
+          : `<input type="checkbox" ${czChecked[p.id]?'checked':''} onclick="event.stopPropagation();czToggleProc('${p.id}')">`}
+      </div>
+      <div class="rubro-list">${rubroRows}</div>
+      <div class="proc-subtotal"><span>Subtotal ${p.label}</span><b>ARS ${fmtDec2(subtotal)}/KG</b></div>
+    </div>`;
+  }).join('');
+}
+
+function czToggleProc(id){
+  czChecked[id] = !czChecked[id];
+  czRenderProcesos();
+  czCalc();
+}
+
+function czSetRubroOverride(centroId, idx, val){
+  const key = centroId+'__'+idx;
+  czRubroOverrides[key] = parseNum(val);
+  czRenderProcesos();
+  czCalc();
+}
+
+function parseNum(v){ if(typeof v==='number')return v; const s=String(v||'').trim().replace(/\./g,'').replace(',','.'); const n=parseFloat(s); return isNaN(n)?0:n; }
+
+function czPopulateCompSelect(){
+  const sel = document.getElementById('czCompSel');
+  if(!sel || !DATA) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— elegí un componente —</option>';
+  (DATA.top_comps||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c=>{
+    const o = document.createElement('option'); o.value = c.name; o.textContent = c.name; sel.appendChild(o);
+  });
+  if(current) sel.value = current;
+}
+
+function czOnCompSelect(){
+  const name = document.getElementById('czCompSel').value;
+  const c = (DATA.top_comps||[]).find(c=>c.name===name);
+  document.getElementById('czCompCostoKg').value = c ? c.costo_kg.toFixed(2) : '';
+}
+
+function czAddItem(){
+  const name = document.getElementById('czCompSel').value;
+  const kg = parseNum(document.getElementById('czCompKg').value);
+  const costoKg = parseNum(document.getElementById('czCompCostoKg').value);
+  if(!name){ alert('Elegí un componente'); return; }
+  if(kg<=0){ alert('Ingresá una cantidad de KG mayor a 0'); return; }
+  czItems.push({name, kg, costoKg});
+  document.getElementById('czCompKg').value = '';
+  czRenderItems();
+  czCalc();
+}
+
+function czRemoveItem(i){
+  czItems.splice(i,1);
+  czRenderItems();
+  czCalc();
+}
+
+function czRenderItems(){
+  const body = document.getElementById('czItemsBody');
+  if(!body) return;
+  if(!czItems.length){ body.innerHTML = '<tr class="empty-row"><td colspan="5">Todavía no agregaste componentes</td></tr>'; return; }
+  body.innerHTML = czItems.map((it,i)=>`
+    <tr>
+      <td>${it.name}</td>
+      <td class="num">${fmt(it.kg)}</td>
+      <td class="num">${fmtDec2(it.costoKg)}</td>
+      <td class="num" style="color:var(--accent2);font-weight:600">ARS ${fmtM(it.kg*it.costoKg)}</td>
+      <td style="text-align:center"><button class="del" onclick="czRemoveItem(${i})" title="Quitar">×</button></td>
+    </tr>`).join('');
+}
+
+function czCalc(){
+  const resArea = document.getElementById('czResArea');
+  const ph = document.getElementById('czResPlaceholder');
+  if(!resArea) return;
+  if(!czItems.length){ resArea.style.display='none'; ph.style.display='block'; return; }
+  resArea.style.display='block'; ph.style.display='none';
+
+  const kgTotal = czItems.reduce((s,i)=>s+i.kg,0);
+  const costoMP = czItems.reduce((s,i)=>s+i.kg*i.costoKg,0);
+
+  const breakdown = czPROCESOS.map(p=>{
+    const aplica = p.alwaysOn || czChecked[p.id];
+    const tasa = czGetTasa(p.id);
+    const monto = aplica ? kgTotal*tasa : 0;
+    return {label:p.label, color:p.color, tasa, monto, checked:aplica};
+  });
+
+  const cfTotal = breakdown.reduce((s,b)=>s+b.monto,0);
+  const costoTotal = costoMP + cfTotal;
+  const costoKg = kgTotal>0 ? costoTotal/kgTotal : 0;
+
+  document.getElementById('czRKg').textContent = fmt(kgTotal)+' KG';
+  document.getElementById('czRMp').textContent = 'ARS '+fmtM(costoMP);
+  document.getElementById('czRCf').textContent = 'ARS '+fmtM(cfTotal);
+  document.getElementById('czRTot').textContent = 'ARS '+fmtM(costoTotal);
+  document.getElementById('czRKgTotal').textContent = fmtDec2(costoKg);
+
+  const items2 = [{label:'Materia Prima', color:'#4f7ef7', monto:costoMP}].concat(
+    breakdown.filter(b=>b.checked && b.monto>0).map(b=>({label:b.label,color:b.color,monto:b.monto}))
+  );
+  const mx = Math.max(...items2.map(i=>i.monto),1);
+  document.getElementById('czBreakdown').innerHTML = items2.map(i=>`
+    <div class="bd-row">
+      <div class="bd-dot" style="background:${i.color}"></div>
+      <div class="bd-name">${i.label}</div>
+      <div class="bd-bar-t"><div class="bd-bar-f" style="width:${(i.monto/mx*100).toFixed(0)}%;background:${i.color}"></div></div>
+      <div class="bd-val">ARS ${fmtM(i.monto)} <span style="color:var(--text3)">(${(i.monto/costoTotal*100).toFixed(1)}%)</span></div>
+    </div>`).join('');
+
+  const margen = parseNum(document.getElementById('czMargen').value);
+  const precio = costoTotal * (1 + margen/100);
+  document.getElementById('czRPrecio').textContent = margen>0 ? 'ARS '+fmtM(precio) : '—';
+}
+
+// Costos fijos (sección 2) sólo depende de localStorage: se arma una vez al cargar la página.
+czPopulateCfPeriodoSel();
+czRenderProcesos();
+
 
 // ── DATOS TAB ────────────────────────────────────────────────────────────────
 function renderDatos() {
@@ -886,84 +1081,22 @@ function renderDatos() {
   const entries = Object.values(manifest).sort((a,b)=>b.periodo.localeCompare(a.periodo));
   if(!entries.length){el.innerHTML='<p style="color:var(--text3)">No hay períodos cargados.</p>';return;}
   const fmtN = n => n?.toLocaleString('es-AR') || '—';
-  const isActive = p => currentPeriodo===p;
-
-  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">' +
-    entries.map(m => {
-      const active = isActive(m.periodo);
-      const borderColor = active ? 'var(--accent)' : 'var(--border)';
-      const archivos = m.archivos || {};
-      const fileList = [
-        archivos.rpcp199 ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.rpcp199}</div>` : '<div style="font-size:10px;color:var(--text3)">· rpcp199 no registrado</div>',
-        archivos.ragr004 ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.ragr004}</div>` : '<div style="font-size:10px;color:var(--text3)">· ragr004 no registrado</div>',
-        archivos.catalogo ? `<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><span style="color:var(--accent2)">✓</span>${archivos.catalogo}</div>` : ''
-      ].filter(Boolean).join('');
-
-      return `
-      <div style="background:var(--surface2);border:2px solid ${borderColor};border-radius:8px;overflow:hidden;transition:.15s">
-        <!-- Header clickeable -->
-        <div onclick="changePeriodo('${m.periodo}')" style="padding:14px 16px;cursor:pointer"
-          onmouseover="this.parentElement.style.borderColor='var(--accent)'"
-          onmouseout="this.parentElement.style.borderColor='${borderColor}'">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-            <span style="font-size:14px;font-weight:600">${m.label}</span>
-            ${active ? '<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px">Activo</span>' : ''}
-            ${m.local ? '<span style="background:rgba(52,201,126,.12);color:var(--accent2);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(52,201,126,.3)">Local</span>' : '<span style="background:rgba(79,126,247,.12);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(79,126,247,.3)">GitHub</span>'}
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2);margin-bottom:8px">
-            <div>KG: <span style="color:var(--text)">${fmtN(m.total_kg)}</span></div>
-            <div>Artículos: <span style="color:var(--text)">${m.total_arts||'—'}</span></div>
-            <div>OPs: <span style="color:var(--text)">${m.total_ops||'—'}</span></div>
-            <div>Proc: <span style="color:var(--text3)">${(m.procesado||'').substring(0,10)}</span></div>
-          </div>
-          ${fileList ? `<div style="border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:3px">${fileList}</div>` : ''}
-        </div>
-        <!-- Acciones (solo períodos locales) -->
-        ${m.local ? `
-        <div style="border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;background:rgba(0,0,0,.15)">
-          <button onclick="reprocesarPeriodo('${m.periodo}')"
-            style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--accent);padding:6px 10px;border-radius:6px;font-size:11px;cursor:pointer">
-            ↺ Re-procesar
-          </button>
-          <button onclick="deletePeriodo('${m.periodo}')"
-            style="background:var(--surface);border:1px solid rgba(224,92,92,.4);color:var(--accent4);padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer">
-            🗑
-          </button>
-        </div>` : ''}
-      </div>`;
-    }).join('') + '</div>';
-}
-
-function deletePeriodo(periodo) {
-  if(!confirm(`¿Eliminás los datos de ${periodo} del almacenamiento local?`)) return;
-  localStorage.removeItem(LS_DATA_PFX + periodo);
-  let lsMf = {};
-  try { lsMf = JSON.parse(localStorage.getItem(LS_MANIFEST)||'{}'); } catch(e){}
-  delete lsMf[periodo];
-  try { localStorage.setItem(LS_MANIFEST, JSON.stringify(lsMf)); } catch(e){}
-  delete manifest[periodo];
-  // Si era el período activo, limpiamos
-  if(currentPeriodo === periodo) {
-    currentPeriodo = null; DATA = null;
-    document.getElementById('periodoBadge').textContent = 'Sin datos';
-  }
-  // Sacamos del selector
-  const sel = document.getElementById('periodoSel');
-  const opt = [...sel.options].find(o=>o.value===periodo);
-  if(opt) sel.removeChild(opt);
-  renderDatos();
-}
-
-function reprocesarPeriodo(periodo) {
-  // Pre-rellena el selector de período en el formulario y hace scroll al área de carga
-  const [anioR, mesR] = periodo.split('-');
-  const anioSel = document.getElementById('uploadAnio');
-  const mesSel  = document.getElementById('uploadMes');
-  if(anioSel) anioSel.value = anioR;
-  if(mesSel)  mesSel.value  = mesR;
-  // Sube al área de carga
-  document.getElementById('dropZone')?.scrollIntoView({behavior:'smooth', block:'center'});
-  setLog('Cargá los archivos nuevamente para re-procesar ' + periodo);
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">' +
+    entries.map(m => `
+    <div onclick="changePeriodo('${m.periodo}')" style="background:var(--surface2);border:2px solid ${currentPeriodo===m.periodo?'var(--accent)':'var(--border)'};border-radius:8px;padding:14px 16px;cursor:pointer;transition:.15s"
+      onmouseover="this.style.borderColor='var(--accent)'"
+      onmouseout="this.style.borderColor='${currentPeriodo===m.periodo?'var(--accent)':'var(--border)'}'">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:14px;font-weight:600">${m.label}</span>
+        ${(currentPeriodo===m.periodo?'<span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:4px">Activo</span>':'')+(m.local?'<span style="background:rgba(52,201,126,.15);color:var(--accent2);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(52,201,126,.3);margin-left:4px">Local</span>':'')}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2)">
+        <div>KG: <span style="color:var(--text)">${fmtN(m.total_kg)}</span></div>
+        <div>Artículos: <span style="color:var(--text)">${m.total_arts||'—'}</span></div>
+        <div>OPs: <span style="color:var(--text)">${m.total_ops||'—'}</span></div>
+        <div style="color:var(--text3);font-size:10px">Proc: ${(m.procesado||'').substring(0,10)}</div>
+      </div>
+    </div>`).join('') + '</div>';
 }
 
 // ── INIT PER PERIOD ───────────────────────────────────────────────────────────
@@ -981,40 +1114,6 @@ document.getElementById('kkg').textContent=fmtM(s.total_kg)+' KG';
 document.getElementById('kck').textContent='ARS '+fmt(s.costo_por_kg);
 document.getElementById('kop').textContent=s.total_ops;
 document.getElementById('kar').textContent=s.total_arts;
-
-// CF summary row
-{
-  const tasas = loadCF();
-  const cfRow = document.getElementById('cfSummaryRow');
-  if(tasas && Object.values(tasas).some(t=>t.tasa_kg>0)){
-    const totMP  = s.total_costo;
-    const totKG  = s.total_kg;
-    const tasaTotal = Object.values(tasas).reduce((sum,t)=>sum+(t.tasa_kg||0),0);
-    const totCF  = totKG * tasaTotal;
-    const totTot = totMP + totCF;
-    cfRow.style.display='flex';
-    cfRow.innerHTML=`
-      <div style="flex:1;min-width:170px">
-        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costo Total (MP + CF)</div>
-        <div style="font-size:22px;font-weight:700;color:var(--accent2)">ARS ${fmtM(totTot)}</div>
-      </div>
-      <div style="flex:1;min-width:150px">
-        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costos Fijos Apropiados</div>
-        <div style="font-size:22px;font-weight:700;color:var(--accent3)">ARS ${fmtM(totCF)}</div>
-        <div style="font-size:11px;color:var(--text3)">${(totCF/totTot*100).toFixed(1)}% del costo total</div>
-      </div>
-      <div style="flex:1;min-width:150px">
-        <div style="font-size:10px;color:var(--accent3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Costo Promedio Total</div>
-        <div style="font-size:22px;font-weight:700;color:var(--accent3)">ARS ${fmt(totKG>0?totTot/totKG:0)}/KG</div>
-        <div style="font-size:11px;color:var(--text3)">vs. ARS ${fmt(s.costo_por_kg)}/KG solo MP</div>
-      </div>
-      <div style="align-self:center;white-space:nowrap">
-        <a href="costos_fijos.html" style="font-size:12px;color:var(--accent);text-decoration:none">✏ Editar CF →</a>
-      </div>`;
-  } else {
-    cfRow.style.display='none';
-  }
-}
 
 
 // Costo por grupo donut
@@ -1140,6 +1239,10 @@ DATA.by_grupo.forEach(g=>{
 const TIPOS_INCLUIDOS = new Set(['2 - SIN IMPRESION', '3 - BOBINAS EXTRUSADAS']);
 const MESES_ES = {'01':'Enero','02':'Febrero','03':'Marzo','04':'Abril','05':'Mayo',
   '06':'Junio','07':'Julio','08':'Agosto','09':'Septiembre','10':'Octubre','11':'Noviembre','12':'Diciembre'};
+const LS_DATA_PFX = 'plastimi_data_';
+const LS_MANIFEST = 'plastimi_manifest';
+const LS_CATALOG  = 'plastimi_catalog';
+
 let dropFiles = {};  // { rpcp199: File, ragr004: File, catalogo: File }
 let cachedCatalog = {};
 
@@ -1400,10 +1503,8 @@ function buildDashboardData(records, periodo) {
 
 // Main processing function
 async function procesarArchivos() {
-  const anio = document.getElementById('uploadAnio').value;
-  const mes  = document.getElementById('uploadMes').value;
-  const periodo = anio + '-' + mes;
-  if(!anio || !mes) { setLog('Elegí el período antes de procesar.', 'err'); return; }
+  const periodo = document.getElementById('uploadPeriodo').value;
+  if(!periodo) { setLog('Elegí el período antes de procesar.', 'err'); return; }
   if(!dropFiles.rpcp199 || !dropFiles.ragr004) { setLog('Faltán archivos.', 'err'); return; }
   if(typeof XLSX === 'undefined') { setLog('Librería XLSX no cargada aún, esperá un momento.', 'err'); return; }
 
@@ -1456,12 +1557,7 @@ async function procesarArchivos() {
       total_kg:data.summary.total_kg, total_costo:data.summary.total_costo,
       total_arts:data.summary.total_arts, total_ops:data.summary.total_ops,
       procesado: new Date().toISOString().slice(0,16).replace('T',' '),
-      archivo: periodo+'.json', local:true,
-      archivos: {
-        rpcp199: dropFiles.rpcp199?.name || null,
-        ragr004: dropFiles.ragr004?.name || null,
-        catalogo: dropFiles.catalogo?.name || null
-      }
+      archivo: periodo+'.json', local:true
     };
     try { localStorage.setItem(LS_MANIFEST, JSON.stringify(lsMf)); } catch(e){}
     manifest = {...manifest, ...lsMf};
