@@ -455,6 +455,12 @@ function mkChart(id,type,labels,datasets,opts){
 }
 
 // ── MODULE STATE ─────────────────────────────────────────────────────────────
+// (declaradas acá arriba, antes de usarse: si quedan más abajo en el script,
+// el bootstrap de período por defecto las lee antes de que existan y la fusión
+// con localStorage falla en silencio en la primera carga de la página)
+const LS_DATA_PFX = 'plastimi_data_';
+const LS_MANIFEST = 'plastimi_manifest';
+const LS_CATALOG  = 'plastimi_catalog';
 let DATA = null;
 let currentPeriodo = null;
 let manifest = {};
@@ -1239,9 +1245,6 @@ DATA.by_grupo.forEach(g=>{
 const TIPOS_INCLUIDOS = new Set(['2 - SIN IMPRESION', '3 - BOBINAS EXTRUSADAS']);
 const MESES_ES = {'01':'Enero','02':'Febrero','03':'Marzo','04':'Abril','05':'Mayo',
   '06':'Junio','07':'Julio','08':'Agosto','09':'Septiembre','10':'Octubre','11':'Noviembre','12':'Diciembre'};
-const LS_DATA_PFX = 'plastimi_data_';
-const LS_MANIFEST = 'plastimi_manifest';
-const LS_CATALOG  = 'plastimi_catalog';
 
 let dropFiles = {};  // { rpcp199: File, ragr004: File, catalogo: File }
 let cachedCatalog = {};
