@@ -524,8 +524,9 @@ function renderArt(){
     data:{labels:d.comps.map(c=>c.name),
       datasets:[{data:d.comps.map(c=>c.costo),backgroundColor:C,borderWidth:2,borderColor:'#1a1d27'}]},
     options:{responsive:true,maintainAspectRatio:false,
+      layout:{padding:{bottom:40}},
       plugins:{legend:{display:false},
-        tooltip:{callbacks:{label:ctx=>` ${d.comps[ctx.dataIndex].name} · ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
+        tooltip:{yAlign:'bottom',callbacks:{label:ctx=>` ${d.comps[ctx.dataIndex].name} · ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
   });
 
   // pie MP vs CF
@@ -543,7 +544,7 @@ function renderArt(){
       },
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{
-          legend:{position:'bottom',labels:{color:'#8b8fa8',font:{size:12},boxWidth:14,padding:12}},
+          legend:{position:'right',labels:{color:'#8b8fa8',font:{size:12},boxWidth:14,padding:14}},
           tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${(ctx.raw/totalArt*100).toFixed(1)}%)`}}
         }
       }
