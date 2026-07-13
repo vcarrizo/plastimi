@@ -521,10 +521,10 @@ function renderArt(){
   if(artPie)artPie.destroy();
   artPie=new Chart(document.getElementById('cArtPie'),{
     type:'doughnut',
-    data:{labels:d.comps.map(c=>c.name.substring(0,22)),
+    data:{labels:d.comps.map(c=>c.name),
       datasets:[{data:d.comps.map(c=>c.costo),backgroundColor:C,borderWidth:2,borderColor:'#1a1d27'}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{color:'#8b8fa8',font:{size:10},boxWidth:10,padding:6}},
+      plugins:{legend:{display:false},
         tooltip:{callbacks:{label:ctx=>` ${d.comps[ctx.dataIndex].name} · ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
   });
 
@@ -555,14 +555,19 @@ function renderArt(){
   }
   // list
   const mx=d.comps[0]?.costo||1;
-  document.getElementById('compList').innerHTML=d.comps.map((c,i)=>`
-    <div class="comp-row">
+  document.getElementById('compList').innerHTML=d.comps.map((c,i)=>{
+    const cu = c.kg>0 ? c.costo/c.kg : null;
+    return `<div class="comp-row">
       <div class="cdot" style="background:${C[i%C.length]}"></div>
-      <div class="cname" title="${c.name}">${c.name}</div>
+      <div style="flex:1;overflow:hidden;min-width:0">
+        <div class="cname" title="${c.name}">${c.name}</div>
+        ${cu?`<div style="font-size:10px;color:var(--text3);margin-top:1px">ARS ${fmt(cu)}/KG</div>`:''}
+      </div>
       <div class="cbar-t"><div class="cbar-f" style="width:${(c.costo/mx*100).toFixed(0)}%;background:${C[i%C.length]}"></div></div>
       <div class="cpct">${c.pct}%</div>
       <div class="cval">ARS ${fmtM(c.costo)}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 
