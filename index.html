@@ -379,7 +379,29 @@
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap;">
         <div>
           <label style="font-size:11px;color:var(--text2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Período</label>
-          <input type="month" id="uploadPeriodo" class="periodo-input" value="2026-06">
+          <div style="display:flex;gap:8px;">
+            <select id="uploadAnio" class="fs" style="width:80px">
+              <option>2024</option>
+              <option>2025</option>
+              <option selected>2026</option>
+              <option>2027</option>
+              <option>2028</option>
+            </select>
+            <select id="uploadMes" class="fs" style="width:110px">
+              <option value="01">Enero</option>
+              <option value="02">Febrero</option>
+              <option value="03">Marzo</option>
+              <option value="04">Abril</option>
+              <option value="05">Mayo</option>
+              <option value="06" selected>Junio</option>
+              <option value="07">Julio</option>
+              <option value="08">Agosto</option>
+              <option value="09">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+          </div>
         </div>
         <div style="flex:1;min-width:220px;font-size:12px;color:var(--text3);padding-top:18px">
           Arrastrá los archivos <strong style="color:var(--text2)">rpcp199</strong> + <strong style="color:var(--text2)">ragr004</strong>.<br>
@@ -934,8 +956,11 @@ function deletePeriodo(periodo) {
 
 function reprocesarPeriodo(periodo) {
   // Pre-rellena el selector de período en el formulario y hace scroll al área de carga
-  const inp = document.getElementById('uploadPeriodo');
-  if(inp) inp.value = periodo;
+  const [anioR, mesR] = periodo.split('-');
+  const anioSel = document.getElementById('uploadAnio');
+  const mesSel  = document.getElementById('uploadMes');
+  if(anioSel) anioSel.value = anioR;
+  if(mesSel)  mesSel.value  = mesR;
   // Sube al área de carga
   document.getElementById('dropZone')?.scrollIntoView({behavior:'smooth', block:'center'});
   setLog('Cargá los archivos nuevamente para re-procesar ' + periodo);
@@ -1375,8 +1400,10 @@ function buildDashboardData(records, periodo) {
 
 // Main processing function
 async function procesarArchivos() {
-  const periodo = document.getElementById('uploadPeriodo').value;
-  if(!periodo) { setLog('Elegí el período antes de procesar.', 'err'); return; }
+  const anio = document.getElementById('uploadAnio').value;
+  const mes  = document.getElementById('uploadMes').value;
+  const periodo = anio + '-' + mes;
+  if(!anio || !mes) { setLog('Elegí el período antes de procesar.', 'err'); return; }
   if(!dropFiles.rpcp199 || !dropFiles.ragr004) { setLog('Faltán archivos.', 'err'); return; }
   if(typeof XLSX === 'undefined') { setLog('Librería XLSX no cargada aún, esperá un momento.', 'err'); return; }
 
