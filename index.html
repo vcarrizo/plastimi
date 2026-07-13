@@ -260,11 +260,11 @@
         <div id="artGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
           <div>
             <p class="sec" style="margin-bottom:10px">Distribución del costo por componente</p>
-            <div class="cw h320"><canvas id="cArtPie"></canvas></div>
+            <div class="cw h360"><canvas id="cArtPie"></canvas></div>
           </div>
           <div id="artCFDiv" style="display:none">
             <p class="sec" style="margin-bottom:10px">Materia Prima vs. Costos Fijos</p>
-            <div class="cw h320"><canvas id="cArtCFPie"></canvas></div>
+            <div class="cw h360"><canvas id="cArtCFPie"></canvas></div>
           </div>
           <div>
             <p class="sec" style="margin-bottom:10px">Composición de materias primas</p>
@@ -521,11 +521,11 @@ function renderArt(){
   if(artPie)artPie.destroy();
   artPie=new Chart(document.getElementById('cArtPie'),{
     type:'doughnut',
-    data:{labels:d.comps.map(c=>c.name.substring(0,30)),
+    data:{labels:d.comps.map(c=>c.name.substring(0,22)),
       datasets:[{data:d.comps.map(c=>c.costo),backgroundColor:C,borderWidth:2,borderColor:'#1a1d27'}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'right',labels:{color:'#8b8fa8',font:{size:10},boxWidth:10,padding:8}},
-        tooltip:{callbacks:{label:ctx=>` ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
+      plugins:{legend:{position:'bottom',labels:{color:'#8b8fa8',font:{size:10},boxWidth:10,padding:6}},
+        tooltip:{callbacks:{label:ctx=>` ${d.comps[ctx.dataIndex].name} · ARS ${fmtM(ctx.raw)} (${d.comps[ctx.dataIndex].pct}%)`}}}}
   });
 
   // pie MP vs CF
